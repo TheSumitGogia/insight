@@ -1,0 +1,8 @@
+bower_components/**/*
+**.swp
+**.swo
+node_modules/**/*
+images/**/*
+media/**/*
+logs/**/*
+fonts/**/*

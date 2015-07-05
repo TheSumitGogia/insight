@@ -1,0 +1,25 @@
+{
+  "name": "para",
+  "version": "0.0.1",
+  "description": "vector art model editing tool",
+  "main": "scripts/main.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/TheSumitGogia/insight.git"
+  },
+  "author": "Sumit Gogia <summit@mit.edu>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/TheSumitGogia/insight/issues"
+  },
+  "homepage": "https://github.com/TheSumitGogia/insight",
+  "devDependencies": {
+    "grunt": "^0.4.5",
+    "grunt-contrib-clean": "^0.6.0",
+    "grunt-contrib-copy": "^0.5.0",
+    "grunt-contrib-cssmin": "^0.10.0",
+    "grunt-contrib-jshint": "^0.10.0",
+    "grunt-contrib-requirejs": "^0.4.4",
+    "grunt-jscs": "^0.7.1",
+  }
+}
