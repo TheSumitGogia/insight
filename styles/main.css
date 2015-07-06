@@ -1,0 +1,26 @@
+.split-pane {
+  width: 100%;
+  height: 100%;
+}
+
+.split-left {
+  position: fixed;
+  top: 0; left: 0;
+  width: 300px; 
+  height: 100%; 
+  background: #ddd;
+  overflow-y: auto;
+  border-right: 2px solid #00b8e6;
+}
+
+.split-right {
+  box-sizing: border-box;
+  margin-left: 302px;
+  min-height: 100%; 
+  background: #fff;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+}
