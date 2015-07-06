@@ -3,7 +3,7 @@ define([
   "state_management/SelectionManager",
   "state_management/ToolManager",
   "state_management/ModelManager",
-  "Manager'
+  "Manager"
 ], function(paper, SelectionManager, ToolManager, ModelManager, Manager) {
   return function() {
     var drawCanvas = document.getElementById("draw-canvas");
@@ -12,5 +12,5 @@ define([
     SelectionManager.setManager(Manager);
     ToolManager.setManager(Manager);
     ModelManager.setManager(Manager);
-  }
+  };
 });

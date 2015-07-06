@@ -1,5 +1,5 @@
-define(["texxt!!html/ui.html"], function(ui) {
-  document.body.insertAdjacentHtml("afterbegin", ui);
+define(["text!html/main.html"], function(html) {
+  document.body.insertAdjacentHtml("afterbegin", html);
   require(["main"], function(main) {
     main();
   });

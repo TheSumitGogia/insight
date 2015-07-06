@@ -1,5 +1,5 @@
 {
-  "name": "para",
+  "name": "insight",
   "version": "0.0.1",
   "description": "vector art model editing tool",
   "main": "scripts/main.js",
@@ -20,6 +20,6 @@
     "grunt-contrib-cssmin": "^0.10.0",
     "grunt-contrib-jshint": "^0.10.0",
     "grunt-contrib-requirejs": "^0.4.4",
-    "grunt-jscs": "^0.7.1",
+    "grunt-jscs": "^0.7.1"
   }
 }

@@ -1,6 +1,6 @@
 define([
-  'paper',
-  'Manager'
+  "paper",
+  "Manager"
 ], function(paper, Manager) {
 
   var ToolManager = {

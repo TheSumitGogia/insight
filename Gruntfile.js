@@ -1,4 +1,4 @@
-module.exxports = function(grunt) {
+module.exports = function(grunt) {
   "use strict";
 
   grunt.initConfig({
@@ -10,8 +10,8 @@ module.exxports = function(grunt) {
         "bower.json",
         "package.json",
         "*.js",
-        "scripts/**/*.js",
-      ],
+        "scripts/**/*.js"
+      ]
     },
     jscs: {
       src: "<%= jshint.all %>",
@@ -30,13 +30,13 @@ module.exxports = function(grunt) {
     requirejs: {
       compile: {
         options: {
-          paths: { "requirejs": "../../bower_components/requirejs/require" },
-          include: ["requirejs", "app"],
+          paths: { "requirejs": "../bower_components/requirejs/require" },
+          include: ["requirejs", "main"],
           insertRequire: ["uiloader"],
           mainConfigFile: "scripts/config.js",
           baseUrl: "scripts/",
           name: "uiloader",
-          out: "build/para.js",
+          out: "build/insight.js",
           optimize: "none",
           wrapShim: true,
           useStrict: true
