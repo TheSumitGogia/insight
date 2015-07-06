@@ -12,5 +12,7 @@ define([
     SelectionManager.setManager(Manager);
     ToolManager.setManager(Manager);
     ModelManager.setManager(Manager);
+
+    console.log("yoyoyo");
   };
 });

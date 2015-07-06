@@ -1,7 +1,7 @@
 {
     "maximumLineLength": 120,
     "validateLineBreaks": "LF",
-    "validateIndentation": 4,
+    "validateIndentation": 2,
     "disallowMixedSpacesAndTabs": true,
     "requireLineFeedAtFileEnd": true,
     "disallowTrailingComma": true,
@@ -40,8 +40,7 @@
         "return",
         "try",
         "catch",
-        "finally",
-        "function"
+        "finally"
     ],
     "requireSpaceBeforeBinaryOperators": [
         "=", "+=", "-=", "*=", "/=", "%=", "<<=", ">>=", ">>>=",
@@ -63,11 +62,9 @@
     "requireSpaceBeforeBlockStatements": true,
     "requireSpacesInConditionalExpression": true,
     "requireSpacesInAnonymousFunctionExpression": {
-        "beforeOpeningRoundBrace": true,
         "beforeOpeningCurlyBrace": true
     },
     "requireSpacesInNamedFunctionExpression": {
-        "beforeOpeningRoundBrace": true,
         "beforeOpeningCurlyBrace": true
     },
     "requireSpacesInFunctionExpression": {

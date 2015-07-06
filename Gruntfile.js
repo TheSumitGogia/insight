@@ -22,9 +22,10 @@ module.exports = function(grunt) {
 
     clean: ["./build"],
     copy: {
-      html: { src: "para-build.html", dest: "build/para.html" },
+      html: { src: "insight.html", dest: "build/insight.html" },
       images: { expand: true, cwd: "images", src: "**", dest: "build/images/" },
-      fonts: { expand: true, cwd: "fonts", src: "**", dest: "build/fonts/" }
+      fonts: { expand: true, cwd: "fonts", src: "**", dest: "build/fonts/" },
+      styles: { expand: true, cwd: "styles", src: "**", dest: "build/styles/" }
     },
     
     requirejs: {

@@ -7,3 +7,5 @@ require.config({
     "html": "../html"
   }
 });
+
+console.log("here we are");
