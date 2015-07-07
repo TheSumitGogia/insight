@@ -19,6 +19,7 @@ define([
 
     SelectionManager.setManager(Manager);
     ToolManager.setManager(Manager);
+    ToolManager.setupTools();
     ModelManager.setManager(Manager);
 
   };

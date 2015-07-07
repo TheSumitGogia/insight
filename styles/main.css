@@ -112,4 +112,11 @@ html, body {
   background-position-y: 25px;
 }
 
+/*
+ * DRAWING CANVAS 
+ */
 
+#draw-canvas {
+  width: 100%;
+  height: 100%;
+}
