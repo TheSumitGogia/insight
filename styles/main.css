@@ -33,19 +33,26 @@ html, body {
 #toolbar {
   margin-top: 5px;
   margin-right: 5px;
-  width: 288;
-  height: 24px;
+  width: 336px;
+  height: 28px;
   float: right;
   background-color: #fff;
 }
 
 #toolbar .button {
-  width: 24px;
-  height: 24px;
+  width: 28px;
+  height: 28px;
   cursor: pointer;
-  border: 2px solid #fff;
-  border-radius: 6px;
+  border: 3px solid #fff;
+  border-radius: 8px;
   background-color: #00b8e6;
+  background-image: url(../images/icons.svg);
+  background-size: 28px 336px;
+  background-position-x: -3px;
+}
+
+#toolbar .button:hover, #toolbar .button:focus, #toolbar .button:active { 
+  background-color: #0081a1;
 }
 
 .button-default:hover, .button-default:focus, .button-default:active, .button-default.active {
@@ -53,68 +60,56 @@ html, body {
   background-color: #00b8e6;
 }
 
-.button-tool {
-  width: 28px; height: 28px;
-  padding: 0px;
-  border-radius: 0px;
-  border-right: 1px solid #fff;
-  background-image: url(../images/icons.svg);
-  background-size: 336px 28px;
-  background-repeat: no-repeat;
-  background-position-x: 0px;
-  background-position-y: 0px;
-}
-
 .button-tool.active {
   background-color: #0081a1;
 }
 
 #selectTool {
-  background-position-x: 0px;
+  background-position-y: -3px;
 }
 
 #dirSelectTool {
-  background-position-x: 28px;
+  background-position-y: 305px;
 }
 
 #colorSelectTool {
-  background-position-x: 56px;
+  background-position-y: 277px;
 }
 
 #lineTool {
-  background-position-x: 84px;
+  background-position-y: 249px;
 }
 
 #arcTool {
-  background-position-x: 112px;
+  background-position-y: 221px;
 }
 
 #rectangleTool {
-  background-position-x: 140px;
+  background-position-y: 193px;
 }
 
 #ellipseTool {
-  background-position-x: 168px;
+  background-position-y: 165px;
 }
 
 #starTool {
-  background-position-x: 196px;
+  background-position-y: 137px;
 }
 
 #polygonTool {
-  background-position-x: 224px;
+  background-position-y: 109px;
 }
 
 #penTool {
-  background-position-x: 252px;
+  background-position-y: 81px;
 }
 
 #representTool {
-  background-position-x: 280px;
+  background-position-y: 53px;
 }
 
 #groupTool {
-  background-position-x: 308px;
+  background-position-y: 25px;
 }
 
 
