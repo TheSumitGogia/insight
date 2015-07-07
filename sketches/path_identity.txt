@@ -1,0 +1,202 @@
+paths = [];
+selectionPalette = ["#6699FF", "#FF6699", "#99FF66"]
+
+var testSimilar = function(item1, item2) {
+    // invisible copies of items to work on
+    var item1copy = item1.clone({insert: false});
+    var item2copy = item2.clone({insert: false});
+    
+    // rescale to setup check for rigid transform
+    var pathLength1 = item1copy.length;
+    var pathLength2 = item2copy.length;
+    var scaleFactor = pathLength1 / pathLength2;
+    item2copy.scale(scaleFactor);
+    
+    // check for rigid transform
+    // dist of lines and angles between lines equivalent
+    var segments1 = item1copy.segments;
+    var segments2 = item2copy.segments;
+    
+    return matchSegments(segments1, segments2);
+};
+
+var matchPoints = function(ptsArray1, ptsArray2) {
+    var lines1 = getLinesBetweenPoints(ptsArray1);
+    var lines2 = getLinesBetweenPoints(ptsArray2);
+    
+    var lengths1 = linesToLengths(lines1);
+    var lengths2 = linesToLengths(lines2);
+    
+    var angles1 = getAnglesBetweenLines(lines1);
+    var angles2 = getAnglesBetweenLines(lines2);
+    
+    return (testAlignment(lengths1, lengths2) && testAlignment(angles1, angles2));
+};
+
+var matchSegments = function(segArray1, segArray2) {
+    var mapProp = function(arr, prop) {
+        return arr.map(function(obj) { return obj[prop]; });      
+    };
+    
+    var pts1 = mapProp(segArray1, 'point');
+    var pts2 = mapProp(segArray2, 'point');
+    var handlesIn1 = mapProp(segArray1, 'handleIn');
+    var handlesIn2 = mapProp(segArray2, 'handleIn');
+    var handlesOut1 = mapProp(segArray1, 'handleOut');
+    var handlesOut2 = mapProp(segArray2, 'handleOut');
+    
+    var flagPointMatch = matchPoints(pts1, pts2);
+    var flagHandleInMatch = matchPoints(handlesIn1, handlesIn2);
+    var flagHandleOutMatch = matchPoints(handlesOut1, handlesOut2);
+    
+    return (flagPointMatch && flagHandleInMatch && flagHandleOutMatch);
+};
+
+var linesToLengths = function(lineArray) {
+    return lineArray.map(function(line) { return line.length; });
+}
+
+var testAlignment = function(array1, array2) {
+    if (array1.length != array2.length) { return false; }
+    for (var i = 0; i < array1.length; i++) {
+        var check = true;
+        for (var j = 0; j < array2.length; j++) {
+            if (!tolerance(array1[j], array2[(i + j) % array2.length], 0.0001)) { 
+                check = false;
+                break; 
+            }        
+        }
+        if (check) { return true; }
+    }
+    return false;
+}
+
+var tolerance = function(float1, float2, epsilon) {
+    return (Math.abs(float1 - float2) < epsilon)
+}
+
+var getLinesBetweenPoints = function(points) {
+    var lineArray = points.reduce(
+        function(prevLineArray, currPoint, ind, pointArr) {
+            var prevPoint = ind === 0 ? pointArr[pointArr.length - 1] : pointArr[ind - 1];
+            prevLineArray.push(currPoint - prevPoint);
+            return prevLineArray;
+        },
+        []
+    );
+    return lineArray;
+};
+
+var getAnglesBetweenLines = function(lines) {
+    var angleArray = lines.reduce(
+        function(prevAngleArray, currLine, ind, lineArr) {
+            var prevLine = ind === 0 ? lineArr[lineArr.length - 1] : lineArr[ind - 1];
+            prevAngleArray.push(currLine.angle - prevLine.angle);
+            return prevAngleArray;
+        },
+        []
+    );
+    return normalizeAngles(angleArray);
+};
+
+var normalizeAngles = function(angles) {
+    return angles.map(function(angle) { 
+        var normAngle = (angle <= 0) ? (360 + angle) : angle;
+        return normAngle;
+    })
+};
+
+var testCircle1 = new Path.Circle(new Point(100, 70), 50);
+testCircle1.strokeColor = 'blue';
+testCircle1.removeSegment(0);
+testCircle1.name = 'testCircle1';
+paths.push(testCircle1);
+
+var testCircle2 = new Path.Circle(new Point(200, 140), 50);
+testCircle2.strokeColor = 'red';
+testCircle2.removeSegment(1);
+testCircle2.name = 'testCircle2';
+paths.push(testCircle2);
+
+var segTest = testCircle1.segments;
+var ptsTest = segTest.map(function(seg) { return seg.point; });
+var linesTest = getLinesBetweenPoints(ptsTest);
+var anglesTest = getAnglesBetweenLines(linesTest);
+
+var segTest2 = testCircle2.segments;
+var ptsTest2 = segTest2.map(function(seg) { return seg.point; });
+var linesTest2 = getLinesBetweenPoints(ptsTest2);
+var anglesTest2 = getAnglesBetweenLines(linesTest2);
+
+//console.log('Segments for Circle 1', segTest);
+//console.log('Segments for Circle 2', segTest2);
+//console.log('Points for Circle 1', ptsTest);
+//console.log('Points for Circle 2', ptsTest2);
+//console.log('Lines for Circle 1', linesTest);
+//console.log('Lines for Circle 2', linesTest2);
+//console.log('Angles for Circle 1', anglesTest);
+//console.log('Angles for Circle 2', anglesTest2);
+console.log('Check path point match:', matchPoints(ptsTest, ptsTest2));
+console.log('Check path segments match:', matchSegments(segTest, segTest2));
+console.log('Check similarity:', testSimilar(testCircle1, testCircle2));
+
+var randomPoint = function() {
+    var canvas = document.getElementById("canvas");
+    var x = Math.floor(Math.random() * canvas.offsetWidth);
+    var y = Math.floor(Math.random() * canvas.offsetHeight);
+    return new Point(x, y);
+}
+
+var randomColor = function() {
+    return '#'+Math.floor(Math.random()*16777215).toString(16);
+}
+
+var generateVariations = function(path, numVars) {
+    newPaths = []
+    for (var i = 0; i < numVars; i++) {
+        var varPath = path.clone();
+        varPath.name = (path.name + "-copy-" + i);
+        varPath.position = randomPoint();
+        varPath.scale(Math.random() * 2);
+        varPath.rotate(Math.floor(Math.random() * 360));
+        varPath.strokeColor = randomColor();
+        newPaths.push(varPath);
+    }
+    paths.push.apply(paths, newPaths);
+}
+
+generateVariations(testCircle1, 5);
+
+models = [];
+searched = {};
+
+var findModels = function() {
+    for (var i = 0; i < paths.length; i++) {
+        if (i in searched) { continue; }
+        model = [paths[i]];
+        for (var j = i + 1; j < paths.length; j++) {
+            if (testSimilar(paths[i], paths[j])) {
+                model.push(paths[j]);
+                searched[j] = true;
+            }    
+        }
+        searched[i] = true;
+        models.push(model);
+    }
+}
+
+findModels();
+console.log(models);
+
+var selectModels = function() {
+    for (var i = 0; i < models.length; i++) {
+        model = models[i];
+        for (var j = 0; j < model.length; j++) {
+            path = model[j];
+            path.selectedColor = selectionPalette[i];
+            path.selected = true;
+        }
+    }
+}
+
+selectModels();

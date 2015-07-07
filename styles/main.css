@@ -23,4 +23,98 @@
 html, body {
   width: 100%;
   height: 100%;
+  margin: 0px;
 }
+
+/*
+ *  TOOLBAR
+ */
+
+#toolbar {
+  margin-top: 5px;
+  margin-right: 5px;
+  width: 288;
+  height: 24px;
+  float: right;
+  background-color: #fff;
+}
+
+#toolbar .button {
+  width: 24px;
+  height: 24px;
+  cursor: pointer;
+  border: 2px solid #fff;
+  border-radius: 6px;
+  background-color: #00b8e6;
+}
+
+.button-default:hover, .button-default:focus, .button-default:active, .button-default.active {
+  color: #fff;
+  background-color: #00b8e6;
+}
+
+.button-tool {
+  width: 28px; height: 28px;
+  padding: 0px;
+  border-radius: 0px;
+  border-right: 1px solid #fff;
+  background-image: url(../images/icons.svg);
+  background-size: 336px 28px;
+  background-repeat: no-repeat;
+  background-position-x: 0px;
+  background-position-y: 0px;
+}
+
+.button-tool.active {
+  background-color: #0081a1;
+}
+
+#selectTool {
+  background-position-x: 0px;
+}
+
+#dirSelectTool {
+  background-position-x: 28px;
+}
+
+#colorSelectTool {
+  background-position-x: 56px;
+}
+
+#lineTool {
+  background-position-x: 84px;
+}
+
+#arcTool {
+  background-position-x: 112px;
+}
+
+#rectangleTool {
+  background-position-x: 140px;
+}
+
+#ellipseTool {
+  background-position-x: 168px;
+}
+
+#starTool {
+  background-position-x: 196px;
+}
+
+#polygonTool {
+  background-position-x: 224px;
+}
+
+#penTool {
+  background-position-x: 252px;
+}
+
+#representTool {
+  background-position-x: 280px;
+}
+
+#groupTool {
+  background-position-x: 308px;
+}
+
+
