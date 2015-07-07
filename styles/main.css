@@ -51,6 +51,10 @@ html, body {
   background-position-x: -3px;
 }
 
+#toolbar .button.active {
+  background-color: #0081a1;
+}
+
 #toolbar .button:hover, #toolbar .button:focus, #toolbar .button:active { 
   background-color: #0081a1;
 }

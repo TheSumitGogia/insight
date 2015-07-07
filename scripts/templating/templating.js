@@ -25,5 +25,10 @@ define([
     template = Handlebars.default.compile(source);
     var toolbarHTML = template({tools: toolNames});
     toolbar.innerHTML = toolbarHTML;
+
+
+    // TODO: might want to move this later since it's not really templating
+    var polygonToolButton = document.getElementById("polygonTool");
+    polygonToolButton.className = polygonToolButton.className + " active";
   };
 });
