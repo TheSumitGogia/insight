@@ -77,6 +77,7 @@ define([
     switchTool: function(tool) {
       this._currentTool = tool;
       this.tools[tool].activate();
+      console.log(tool + " activated!");
     }
   };
 

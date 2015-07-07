@@ -17,7 +17,7 @@ define([
           buttons[j].className = "button";
         }
         this.className = "button active";
-        ToolManager.switchTool(button.name);
+        ToolManager.switchTool(this.name);
       });
     }
   };
