@@ -17,7 +17,7 @@ define([
       "star", 
       "polygon", 
       "pen", 
-      "repreesent", 
+      "represent", 
       "group"
     ];
     source = document.getElementById("toolbarTemplate").innerHTML;
@@ -29,5 +29,19 @@ define([
     // TODO: might want to move this later since it's not really templating
     var polygonToolButton = document.getElementById("polygonTool");
     polygonToolButton.className = polygonToolButton.className + " active";
+  
+    
+    // IO Toolbar
+    var iobar = document.getElementById("iobar");
+    var ioToolNames = [
+      "import",
+      "export"
+    ];
+    source = document.getElementById("iobarTemplate").innerHTML;
+    template = Handlebars.default.compile(source);
+    var iobarHTML = template({iotools: ioToolNames});
+    iobar.innerHTML = iobarHTML;
+    
+
   };
 });

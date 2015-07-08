@@ -5,8 +5,8 @@ require.config({
     "handlebars": "../bower_components/handlebars/handlebars.amd",
     "paper": "../bower_components/paper/dist/paper-full",
     "underscore": "../bower_components/underscore/underscore",
+    "FileSaver": "../bower_components/file-saver.js/FileSaver",
     "html": "../html"
   }
 });
 
-console.log("here we are");

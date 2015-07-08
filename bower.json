@@ -21,6 +21,8 @@
     "paper": "0.9.19",
     "underscore": "1.6.0",
     "requirejs": "2.1.14",
-    "requirejs-text": "~2.0.12"
+    "requirejs-text": "~2.0.12",
+    "file-saver.js": "1.20150507.2",
+    "Blob": null
   }
 }

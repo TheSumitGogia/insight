@@ -1,18 +1,26 @@
 <div class="split-pane">
   <!-- contains state info and tool parameters -->
   <div class="split-left">
-       
+    <input type="file" id="importInput">   
   </div>
 
   <!-- the drawing portion of the UI... -->
   <div id="drawPanel" class="split-right">
     <!--====TOOLBAR====-->
+    <div id="iobar">
+      <script id="iobarTemplate" type="text/x-handlebars-template">
+        {{#each iotools}}
+        <button name="{{this}}" class="button" id="{{this}}Tool"></div>
+        {{/each}}
+      </script>
+    </div>
+    <div id="tool-sep"> </div>
     <div id="toolbar">
-    <script id="toolbarTemplate" type="text/x-handlebars-template">
-      {{#each tools}}
-      <button name="{{this}}" class="button" id="{{this}}Tool"></div>
-      {{/each}}
-    </script>
+      <script id="toolbarTemplate" type="text/x-handlebars-template">
+        {{#each tools}}
+        <button name="{{this}}" class="button" id="{{this}}Tool"></div>
+        {{/each}}
+      </script>
     </div>
     <canvas id="draw-canvas"></canvas>
   </div>

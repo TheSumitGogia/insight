@@ -20,5 +20,6 @@ define([
         ToolManager.switchTool(this.name);
       });
     }
+
   };
 });

@@ -6,7 +6,8 @@ define([
   "state_management/SelectionManager",
   "state_management/ToolManager",
   "state_management/ModelManager",
-  "Manager"
+  "Manager",
+  "utils/StringUtils"
 ], function(helpers, templating, noncanvas, paper, SelectionManager, ToolManager, ModelManager, Manager) {
   return function() {
 
