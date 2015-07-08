@@ -12,7 +12,6 @@ define([
       "dirSelect", 
       "colorSelect", 
       "line", 
-      "arc", 
       "rectangle", 
       "ellipse", 
       "star", 

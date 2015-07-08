@@ -38,7 +38,6 @@ define([
       "dirSelect": DirSelectTool,
       "colorSelect": ColorSelectTool,
       "line": LineTool,
-      "arc": ArcTool,
       "rectangle": RectangleTool,
       "ellipse": EllipseTool,
       "star": StarTool,
