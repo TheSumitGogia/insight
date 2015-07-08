@@ -12,6 +12,8 @@ define([
     _marqee: null,
     _tentative: null,
     selection: null,
+    selectionBounds: null,
+    selectionHandles: null,
 
     onMouseDown: function(event) {
       var hitResult = paper.project.hitTest(event.point, Defaults.selectHitOptions);
@@ -34,6 +36,12 @@ define([
         }
       }
       this.selection = null;
+      if (this.selectionBounds) {
+        this.selectionBounds.remove();
+        this.selectionBounds = null;
+        this.selectionHandles.remove();
+        this.selectionHandles = null;
+      }
     },
 
     onMouseUp: function(event) {
@@ -47,7 +55,6 @@ define([
     _marqeeMouseUp: function(event) {
       if (PaperUtils.tolerance(event.point, this._downPoint, 2)) {
         if (this._tentative) {
-          console.log("here");
           this.selection = [this._tentative];  
         }
       } else {
@@ -69,6 +76,8 @@ define([
           this.selection[i].selectedColor = Defaults.marqeeSelectColor;
           this.selection[i].selected = true;
         }
+        this.selectionBounds = PaperUtils.drawBounds(this.selection);
+        this.selectionHandles = PaperUtils.drawHandles(this.selectionBounds);
       }
       // TODO: draw handles
       
@@ -126,6 +135,8 @@ define([
       for (var i = 0; i < this.selection.length; i++) {
         this.selection[i].translate(delta.x, delta.y);
       }
+      this.selectionBounds.translate(delta.x, delta.y);
+      this.selectionHandles.translate(delta.x, delta.y);
     },
 
     onMouseMove: function(event) {

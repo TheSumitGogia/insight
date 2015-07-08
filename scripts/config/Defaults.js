@@ -16,6 +16,24 @@ define([
       strokeWidth: 0
     },
 
+    boundsStyle: {
+      fillColor: null,
+      strokeColor: "#e64848",
+      strokeWidth: 1 
+    },
+
+    handleStyle: {
+      fillColor: "#ff5050",
+      strokeColor: "#ff5050",
+      strokeWidth: 0
+    },
+
+    handleOverStyle: {
+      fillColor: "#b23838",
+      strokeColor: "#b23838",
+      strokeWidth: 0
+    },
+
     selectionBoundsStyle: {
       fillColor: null,
       strokeColor: "#a3e5f6",
