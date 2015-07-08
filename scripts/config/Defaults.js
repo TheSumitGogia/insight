@@ -14,7 +14,17 @@ define([
       fillColor: "#0093b8",
       strokeColor: "#0093b8",
       strokeWidth: 0
-    }    
+    },
+
+    selectHitOptions: {
+      stroke: true,
+      fill: true,
+      bounds: true,
+      center: true,
+      tolerance: 2 
+    },   
+
+    representSelectColor: "#ff5050" 
   };
 
   return Defaults;
