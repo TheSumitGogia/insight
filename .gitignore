@@ -3,6 +3,7 @@ bower_components/**/*
 **.swo
 node_modules/**/*
 images/**/*
+!images/**/*.svg
 media/**/*
 logs/**/*
 fonts/**/*
