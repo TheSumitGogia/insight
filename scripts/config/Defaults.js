@@ -16,6 +16,13 @@ define([
       strokeWidth: 0
     },
 
+    selectionBoundsStyle: {
+      fillColor: null,
+      strokeColor: "#a3e5f6",
+      strokeWidth: 2,
+      dashArray: [8, 4]
+    },
+
     selectHitOptions: {
       stroke: true,
       fill: true,
@@ -24,7 +31,8 @@ define([
       tolerance: 2 
     },   
 
-    representSelectColor: "#ff5050" 
+    representSelectColor: "#ff5050", 
+    marqeeSelectColor: "#ff5050" 
   };
 
   return Defaults;

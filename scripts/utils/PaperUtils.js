@@ -1,7 +1,8 @@
 define([
   "paper",
-  "underscore"
-], function(paper, _) {
+  "underscore",
+  "utils/MathUtils"
+], function(paper, _, MathUtils) {
   
   var PaperUtils = {
     
@@ -49,8 +50,13 @@ define([
 
     randomColor: function() {
       return "#" + Math.floor(Math.random() * 16777215).toString(16);
-    }
+    },
 
+    tolerance: function(point1, point2, epsilon) {
+      var xCheck = MathUtils.tolerance(point1.x, point2.x, epsilon);
+      var yCheck = MathUtils.tolerance(point1.y, point2.y, epsilon);
+      return (xCheck && yCheck);
+    }
 
   };
 

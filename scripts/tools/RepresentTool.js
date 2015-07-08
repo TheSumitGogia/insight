@@ -43,9 +43,7 @@ define([
     },
 
     _matchSegments: function(segmentArr1, segmentArr2) {
-      console.log("segArr1", segmentArr1);
       var points1 = ArrayUtils.mapProperty(segmentArr1, "point");
-      console.log("pointsArr1", points1);
       var points2 = ArrayUtils.mapProperty(segmentArr2, "point");
       var handlesIn1 = ArrayUtils.mapProperty(segmentArr1, "handleIn");
       var handlesIn2 = ArrayUtils.mapProperty(segmentArr2, "handleIn");
