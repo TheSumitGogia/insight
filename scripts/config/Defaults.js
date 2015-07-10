@@ -28,7 +28,7 @@ define([
       strokeWidth: 0
     },
 
-    handleOverStyle: {
+    handleActiveStyle: {
       fillColor: "#b23838",
       strokeColor: "#b23838",
       strokeWidth: 0
