@@ -41,7 +41,7 @@ define([
         }
       }
       this.selection = null;
-      if (this.selectionBounds) {
+      if (this._bounds) {
         this._bounds.remove();
         this._bounds = null;
         for (var j = 0; j < this._handles.length; j++) {
@@ -85,8 +85,8 @@ define([
           this.selection[i].selectedColor = Defaults.marqeeSelectColor;
           this.selection[i].selected = true;
         }
-        this.selectionBounds = this.createBounds(this.selection);
-        this.selectionHandles = this.createHandles(this._bounds);
+        this.createBounds(this.selection);
+        this.createHandles(this._bounds);
       }
     },
 
@@ -131,8 +131,10 @@ define([
       for (var i = 0; i < this.selection.length; i++) {
         this.selection[i].translate(delta.x, delta.y);
       }
-      this.selectionBounds.translate(delta.x, delta.y);
-      this.selectionHandles.translate(delta.x, delta.y);
+      this._bounds.translate(delta.x, delta.y);
+      for (var j = 0; j < this._handles.length; j++) {
+        this._handles[j].translate(delta.x, delta.y);
+      }
     },
 
     onMouseMove: function(event) {
@@ -140,25 +142,9 @@ define([
     },
 
     createBounds: function(paths) {
-      var topLeftXVals = paths.map(function(path) { 
-        return path.bounds.x;
-      });
-      var topLeftYVals = paths.map(function(path) {
-        return path.bounds.y;
-      });
-      var bottomRightXVals = paths.map(function(path) {
-        return path.bounds.bottomRight.x;
-      });
-      var bottomRightYVals = paths.map(function(path) {
-        return path.bounds.bottomRight.y;
-      });
-      var xMin = Math.min.apply(null, topLeftXVals);
-      var xMax = Math.max.apply(null, bottomRightXVals);
-      var yMin = Math.min.apply(null, topLeftYVals);
-      var yMax = Math.max.apply(null, bottomRightYVals);
-    
-      var boundsSize = new paper.Size(xMax - xMin, yMax - yMin);
-      var bounds = new paper.Path.Rectangle(new paper.Point(xMin, yMin), boundsSize);
+      var corners = PaperUtils.getBounds(paths); 
+      var boundsSize = new paper.Size(corners.xMax - corners.xMin, corners.yMax - corners.yMin);
+      var bounds = new paper.Path.Rectangle(new paper.Point(corners.xMin, corners.yMin), boundsSize);
       bounds.style = Defaults.boundsStyle;
 
       var linComboArray = [[0, 0], [0.5, 0], [1, 0], [0, 0.5], [1, 0.5], [0, 1], [0.5, 1], [1, 1]];
@@ -166,7 +152,7 @@ define([
       var boundDots = [];
       for (var i = 0; i < linComboArray.length; i++) {
         var linCombo = new paper.Point(linComboArray[i]);
-        var dotPoint = linCombo.multiply(boundsPointForm).add(new paper.Point(xMin, yMin));
+        var dotPoint = linCombo.multiply(boundsPointForm).add(new paper.Point(corners.xMin, corners.yMin));
         var boundDot = new paper.Path.Circle(dotPoint, 2);
         boundDot.style = Defaults.boundsStyle;
         boundDot.name = "boundDot" + i;
@@ -178,10 +164,23 @@ define([
       boundsGroup.type = "ui";
       boundsGroup.name = "bounds";
       boundsGroup.linkedGeometry = paths;
-      EventManager.addSubscriber(boundsGroup, paths, "scale", function(args) {
-        boundsGroup.scale(args[0], args[1], args[2]);    
-      });
       boundsGroup.bringToFront();
+      // actually just redraws dots
+      boundsGroup.redraw = function() {
+        for (var i = 0; i < linComboArray.length; i++) {
+          var ncorners = PaperUtils.getBounds(this.linkedGeometry); 
+          var nBoundsSize = new paper.Size(ncorners.xMax - ncorners.xMin, ncorners.yMax - ncorners.yMin);
+          var scaleF = nBoundsSize.divide(this.children[0].bounds.size);
+          this.children[0].scale(scaleF.width, scaleF.height);
+          var newCenter = new paper.Point((ncorners.xMax + ncorners.xMin) / 2, (ncorners.yMax + ncorners.yMin) / 2);
+
+          this.children[0].position = newCenter; 
+          var linCombo = new paper.Point(linComboArray[i]);
+          var boundsPointForm = new paper.Point(nBoundsSize.width, nBoundsSize.height);
+          var dotPoint = linCombo.multiply(boundsPointForm).add(new paper.Point(ncorners.xMin, ncorners.yMin));
+          boundDots[i].position = dotPoint;
+        } 
+      };
       this._bounds = boundsGroup;
     
     },
@@ -228,8 +227,13 @@ define([
         scaleHandles[j].linkedBounds = bounds;
         scaleHandles[j].bringToFront();
       }
+      scaleHandles.redraw = function() {
+        for (var i = 0; i < this.length; i++) {
+          var boundPointMatch = bounds.getItem({name: ("boundDot" + mapHandleToBoundPoint[i])});
+          this[i].position = boundPointMatch.position; 
+        }                          
+      };
 
-      var handlesGroup = new paper.Group(scaleHandles);
       this._handles = scaleHandles;
       this._createHandleListeners();
 
@@ -252,22 +256,6 @@ define([
           }
         };
       }
-      EventManager.addSubscriber(handles, linkedBounds, "scale", function(args) {
-        var mapHandleToBoundPoint = {
-          0: 3,
-          1: 0,
-          2: 1,
-          3: 2,
-          4: 4,
-          5: 7,
-          6: 6,
-          7: 5
-        };
-        for (var i = 0; i < handles.length; i++) {
-          var boundPointMatch = linkedBounds.getItem({name: ("boundDot" + mapHandleToBoundPoint[i])});
-          handles[i].position = boundPointMatch.position; 
-        }                          
-      });
     },
 
     _handlesMouseDown: function(event) {
@@ -294,18 +282,19 @@ define([
 
     _handlesMouseDrag: function(event) {
       if (this.activeHandle) {
-        console.log(this.activeHandle);
         var opposingHandle = this.activeHandle.opposite;
         var linkedGeometry = opposingHandle.linkedBounds.linkedGeometry;
         var scales = event.point.subtract(opposingHandle.position)
           .divide(event.lastPoint.subtract(opposingHandle.position));
-       
+        if (this.activeHandle.position.x === opposingHandle.position.x) { scales.x = 1; }
+        if (this.activeHandle.position.y === opposingHandle.position.y) { scales.y = 1; } 
         // TODO: godawful problem with paths not remaining if group is removed
         // so use array of geometry for now...
         for (var i = 0; i < linkedGeometry.length; i++) { 
           linkedGeometry[i].scale(scales.x, scales.y, opposingHandle.position);
         }
-        EventManager.handleEvent(linkedGeometry, "scale", [scales.x, scales.y, opposingHandle.position]);      
+        this._bounds.redraw();
+        this._handles.redraw();
         return true;
       } 
       return false;

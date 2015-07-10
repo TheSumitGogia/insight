@@ -33,6 +33,10 @@ define([
       }
     },
 
+    getBounds: function(paths) {
+
+    }, 
+
     removeListener: function(obj, op) {
       
     }

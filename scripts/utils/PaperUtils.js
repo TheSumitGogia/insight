@@ -57,6 +57,26 @@ define([
       var xCheck = MathUtils.tolerance(point1.x, point2.x, epsilon);
       var yCheck = MathUtils.tolerance(point1.y, point2.y, epsilon);
       return (xCheck && yCheck);
+    },
+
+    getBounds: function(paths) {
+      var topLeftXVals = paths.map(function(path) { 
+        return path.bounds.x;
+      });
+      var topLeftYVals = paths.map(function(path) {
+        return path.bounds.y;
+      });
+      var bottomRightXVals = paths.map(function(path) {
+        return path.bounds.bottomRight.x;
+      });
+      var bottomRightYVals = paths.map(function(path) {
+        return path.bounds.bottomRight.y;
+      });
+      var xMin = Math.min.apply(null, topLeftXVals);
+      var xMax = Math.max.apply(null, bottomRightXVals);
+      var yMin = Math.min.apply(null, topLeftYVals);
+      var yMax = Math.max.apply(null, bottomRightYVals);
+      return {xMin: xMin, xMax: xMax, yMin: yMin, yMax: yMax};
     }
 
   };
