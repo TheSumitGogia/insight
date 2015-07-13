@@ -10,6 +10,7 @@ define([
   "state_management/SelectionManager",
   "state_management/ToolManager",
   "state_management/ModelManager",
+  "state_management/PaperManager",
   "Manager"
 ], function(
   paper,
@@ -20,7 +21,8 @@ define([
   noncanvas, 
   SelectionManager, 
   ToolManager, 
-  ModelManager, 
+  ModelManager,
+  PaperManager, 
   Manager
 ) {
   return function() {
@@ -39,6 +41,6 @@ define([
     ToolManager.setManager(Manager);
     ToolManager.setupTools();
     ModelManager.setManager(Manager);
-
+    PaperManager.setupPaper();
   };
 });

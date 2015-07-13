@@ -27,9 +27,11 @@ define([
       if (hitResult) {
         if (hitResult.item.selected) { return; }
         this._clearSelection();
+        // this._removeSelection("marquee");
         this._downPoint = event.point;
         this._tentative = hitResult.item;
       } else {
+        // this._removeSelection("marquee");
         this._clearSelection(); 
       } 
     },
@@ -49,9 +51,32 @@ define([
         }
         this._handles = null;
       }
+
+      // var success = this.removeSelection("marquee");
+      // if (success) {
+      //  this._removeSelectionUI();
+      // }
+    },
+
+    _removeSelectionUI: function() {
+      this._removeBounds();
+      this._removeHandles();
+    },
+
+    _removeBounds: function() {
+      this._bounds.remove();
+      this._bounds = null;
+    },
+
+    _removeHandles: function() {
+      for (var i = 0; i < this._handles.length; i++) {
+        this._handles[i].remove();
+      }
+      this._handles = null;
     },
 
     onMouseUp: function(event) {
+      // if (SelectionManager.hasSelection("marquee"))
       if (this.selection) {
         var breakFlag = this._handlesMouseUp(event);
         if (breakFlag) { return; }
@@ -64,10 +89,12 @@ define([
     _marqeeMouseUp: function(event) {
       if (PaperUtils.tolerance(event.point, this._downPoint, 2)) {
         if (this._tentative) {
+          // SelectionManager.createSelection("marquee", [this.tentative])
           this.selection = [this._tentative];  
         }
       } else {
         var marqee = this._marqee;
+        // SelectionManager.createSelection("marquee", paper.project.getItems...)
         this.selection = paper.project.getItems({
           bounds: function(bounds) {
             var topLeftCheck = bounds.topLeft.x > marqee.bounds.topLeft.x && 
@@ -80,6 +107,7 @@ define([
       }
       if (this._marqee) { this._marqee.remove(); }
       this._downPoint = this._tentative = this._marqee = null;
+      // if (SelectionManager.getSelection("marquee").length > 0)
       if (this.selection) {
         for (var i = 0; i < this.selection.length; i++) {
           this.selection[i].selectedColor = Defaults.marqeeSelectColor;
@@ -120,6 +148,7 @@ define([
         this._marqee.scale(widthScale, heightScale, scalePoint);
       }
 
+      // reposition the marquee to the new center
       this._marqee.position = event.point.add(this._downPoint).divide(2);
     },
 
@@ -128,6 +157,7 @@ define([
       if (breakFlag) { return; }
       
       var delta = event.point.subtract(event.lastPoint);
+      // var selection = SelectionManager.getSelection("marquee");
       for (var i = 0; i < this.selection.length; i++) {
         this.selection[i].translate(delta.x, delta.y);
       }

@@ -6,6 +6,7 @@ define([
   
   var BaseTool = {
 
+    // NOTE: buggy, not in use
     addMouseEvent: function(eventName, matchData, callback) {
       if (!(eventName === "mouseLeave" || 
         eventName === "mouseEnter" || 
