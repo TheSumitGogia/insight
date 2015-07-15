@@ -1,10 +1,24 @@
 define([
   "paper",
   "underscore",
-  "config/Defaults"
-], function(paper, _, Defaults) {
-  
+  "config/Defaults",
+  "state_management/ToolManager"
+], function(paper, _, Defaults, ToolManager) {
+
   var BaseTool = {
+
+    _manager: null,
+    _mousePoint: null,
+    actionKeys: {
+      panXKey: {key: ["a"], value: [false]},
+      panYKey: {key: ["s"], value: [false]},
+      zoomKey: {key: ["d"], value: [false]},
+      deleteKey: {key: ["delete"], value: [false]},
+      clearKey: {key: ["end"], value: [false]},
+      cutKey: {key: ["control", "x"], value: [false, false]},
+      copyKey: {key: ["control", "c"], value: [false, false]},
+      pasteKey: {key: ["control", "v"], value: [false, false]} 
+    },
 
     // NOTE: buggy, not in use
     addMouseEvent: function(eventName, matchData, callback) {
@@ -43,6 +57,116 @@ define([
         };  
       }());
       console.log(tool.onMouseDown);
+    },
+
+    onMouseMove: function(event) {
+      this._mousePoint = event.point;
+    },
+
+    onKeyDown: function(event) {
+      // cycle through keys, set true
+      for (var key in this.actionKeys) {
+        if (this.actionKeys.hasOwnProperty(key)) {
+          var keyData = this.actionKeys[key];
+          for (var i = 0; i < keyData.key.length; i++) {
+            if (event.key === keyData.key[i]) {
+              keyData.value[i] = true;
+              return;
+            }
+          }
+        }
+      }
+    }, 
+
+    onKeyUp: function(event) {
+      // cycle through keys, set false
+      for (var key in this.actionKeys) {
+        if (this.actionKeys.hasOwnProperty(key)) {
+          var keyData = this.actionKeys[key];
+          var foundFlag = false;
+          for (var i = 0; i < keyData.key.length; i++) {
+            if (event.key === keyData.key[i]) {
+              keyData.value[i] = false;
+              foundFlag = true;
+              break;
+            }
+          }
+          if (foundFlag) {
+            for (var j = 0; j < keyData.key.length; j++) {
+              if (!keyData.value[i]) { return; }
+            }
+            this.handleKeyPress(key, event);
+          }
+        }
+      }
+    },
+
+    handleKeyPress: function(key, event) {
+      switch (key) {
+        case "deleteKey":
+          this.handleDelete(event);
+          break;
+        case "copyKey":
+          this.handleCopy(event);
+          break;
+        case "cutKey":
+          this.handleCut(event);
+          break;
+        case "pasteKey":
+          this.handlePaste(event);
+          break;
+        case "clearKey":
+          this.handleClear(event);
+          break;
+      }
+    },
+
+    handleDelete: function(event) {
+      var selection = this.request("SelectionManager", "getCurrentSelection", []);
+      if (selection) {
+        this.request("PaperManager", "deleteItems", [selection]); 
+      }
+    },
+
+    handleCopy: function(event) {
+      var selection = this.request("SelectionManager", "getCurrentSelection", []);
+      if (selection) {
+        this.request("PaperManager", "copyItems", [selection]);
+      }
+    },
+
+    handleCut: function(event) {
+      var selection = this.request("SelectionManager", "getCurrentSelection", []);
+      if (selection) {
+        this.request("PaperManager", "cutItems", [selection]);
+      }
+    }, 
+
+    handlePaste: function(event) {
+      this.request("PaperManager", "pasteItems", [this._mousePoint]);  
+    },
+
+    handleClear: function(event) {
+      this.request("PaperManager", "clear", []);
+    },
+
+    onMouseWheel: function(event) {
+      if (this.actionKeys.panYKey.value[0]) {
+        this.request("PaperManager", "stepCenter", [event.deltaX, event.deltaY, event.deltaFactor]);  
+      } else if (this.actionKeys.panXKey.value[0]) {
+        this.request("PaperManager", "stepCenter", [event.deltaY, event.deltaX, event.deltaFactor]);
+      } else if (this.actionKeys.zoomKey.value[0]) {
+        this.request("PaperManager", "stableStepZoom", [event.deltaY, this._mousePoint]);
+      }
+      event.preventDefault(); 
+    },
+
+    setManager: function(manager) {
+      this._manager = manager;
+    },
+
+    request: function(manager, method, args) {
+      return this._manager.request(manager, method, args); 
     }
     
   };

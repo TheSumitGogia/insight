@@ -2,18 +2,20 @@ define([
   "paper",
   "state_management/SelectionManager",
   "state_management/ToolManager",
-  "state_management/ModelManager"
-], function(paper, SelectionManager, ToolManager, ModelManager) {
+  "state_management/ModelManager",
+  "state_management/PaperManager"
+], function(paper, SelectionManager, ToolManager, ModelManager, PaperManager) {
 
   var manageNameMap = {
     "SelectionManager": SelectionManager,
     "ToolManager": ToolManager,
-    "ModelManager": ModelManager
+    "ModelManager": ModelManager,
+    "PaperManager": PaperManager
   };
 
   var Manager = {
     
-    handleRequest: function(srcManager, dstManager, method, args) {
+    handleRequest: function(dstManager, method, args) {
       dstManager = manageNameMap[dstManager];
       return dstManager[method].apply(dstManager, args);
     }

@@ -77,6 +77,13 @@ define([
       var yMin = Math.min.apply(null, topLeftYVals);
       var yMax = Math.max.apply(null, bottomRightYVals);
       return {xMin: xMin, xMax: xMax, yMin: yMin, yMax: yMax};
+    },
+
+    getCenter: function(paths) {
+      var bounds = this.getBounds(paths);
+      var min = new paper.Point(bounds.xMin, bounds.yMin);
+      var max = new paper.Point(bounds.xMas, bounds.yMax);
+      return new paper.Point(min.add(max).divide(2));
     }
 
   };

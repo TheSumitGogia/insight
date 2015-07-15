@@ -36,9 +36,7 @@ define([
       this._currentPath.rotate(rotateFactor);
     },
 
-    onMouseMove: function(event) {
-    
-    }    
+    onMouseMove: BaseCreateTool.onMouseMove   
   });
   return PolygonTool; 
 });

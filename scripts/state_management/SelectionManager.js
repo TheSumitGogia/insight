@@ -1,23 +1,35 @@
 define([
   "paper",
-  "Manager"
-], function(paper, Manager) {
+  "Manager",
+  "config/Defaults"
+], function(paper, Manager, Defaults) {
 
   var SelectionManager = {
     _selections: {},
+    _currentSelector: null,
 
     setManager: function(manager) {
       this.manager = manager;
     },
 
+    request: function(managerName, method, args) {
+      this._manager.handleRequest(managerName, method, args);
+    },
+
+    setCurrentSelector: function(name) {
+      this._currentSelector = name;
+    },
+
     createSelection: function(name, optObjects) {
-      if (!this._selections[name]) { 
+      if (this._selections[name]) { 
         console.log("[ERROR] Selection " + name + " already exists! Stopping creation...");
         return false; 
       }
       var selection = this._selections[name] = [];
+      selection.name = name;
       if (optObjects) {
         for (var i = 0; i < optObjects.length; i++) {
+          optObjects[i].selectedColor = Defaults[name + "SelectColor"];
           optObjects[i].selected = true;
           selection.push(optObjects[i]);
         } 
@@ -44,6 +56,12 @@ define([
       } else {
         console.log("[ERROR] There is no selection named " + name + " to get...");
         return false;
+      }
+    },
+
+    getCurrentSelection: function() {
+      if (this._selections.hasOwnProperty(this._currentSelector)) {
+        return this._selections[this._currentSelector];
       }
     },
 

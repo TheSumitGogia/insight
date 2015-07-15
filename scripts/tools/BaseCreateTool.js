@@ -5,7 +5,7 @@ define([
 ], function(paper, _, BaseTool) {
   
   var BaseCreateTool = _.extend({}, BaseTool, {
-    
+    onMouseMove: BaseTool.onMouseMove    
   });
   return BaseCreateTool;
 });

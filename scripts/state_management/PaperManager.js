@@ -1,8 +1,11 @@
 define([
   "paper",
   "jquery",
+  "state_management/SelectionManager",
+  "state_management/Clipboard",
+  "utils/PaperUtils",
   "jquery-mousewheel"
-], function(paper, $) {
+], function(paper, $, SelectionManager, Clipboard, PaperUtils) {
   
   var PaperManager = {
  
@@ -14,54 +17,14 @@ define([
     panXKey: false,
     panYKey: false,
     zoomKey: false,
+    deleteKey: {code: 46, value: false},
+    clearKey: {code: 35, value: false},
+    cutKey: {code: [17, 88], value: [false, false]},
+    copyKey: {code: [17, 67], value: [false, false]},
+    pasteKey: {code: [17, 86], value: [false, false]}, 
 
-    setupPaper: function() {
-      var that = this;
-      var canvas = $("#draw-canvas");
+    setup: function() {
       this.pan = paper.view.center;
-      // WARNING: These events could conflict with some tool UI!
-      canvas.mousewheel(function(event) {
-        if (that._panYKey) {
-          that.stepCenter(event.deltaX, event.deltaY, event.deltaFactor);
-          event.preventDefault();
-        } else if (that._panXKey) {
-          that.stepCenter(event.deltaY, event.deltaX, event.deltaFactor);
-          event.preventDefault(); 
-        } else if (that._zoomKey) {
-          var mousePosition = new paper.Point(event.offsetX, event.offsetY);
-          var viewPosition = paper.view.viewToProject(mousePosition);
-          that.stableStepZoom(event.deltaY, viewPosition);  
-          event.preventDefault();
-          paper.view.draw();
-        }
-      }); 
-
-      $(window).keydown(function(event) {
-        if (event.which == 65) {
-          that._panXKey = true;
-          that._panYKey = that._zoomKey = false;
-        }
-        if (event.which == 83) {
-          that._panYKey = true;
-          that._panXKey = that._zoomKey = false;
-        }
-        if (event.which == 68) {
-          that._zoomKey = true;
-          that._panXKey = that._panYKey = false;
-        }
-      });
-
-      $(window).keyup(function(event) {
-        if (event.which == 65) {
-          that._panXKey = false;
-        } 
-        if (event.which == 83) {
-          that._panYKey = false;
-        }
-        if (event.which == 68) {
-          that._zoomKey = false;
-        }
-      }); 
     },
 
     setZoom: function(zoomValue) {
@@ -102,8 +65,50 @@ define([
       paper.view.center = paper.view.center.add(offset);
     },
 
+    deleteItems: function(selection) {
+      for (var i = 0; i < selection.length; i++) {
+        var item = selection[i];
+        item.remove();
+        item = null;
+      }
+      SelectionManager.removeSelection(selection.name); 
+    },
+
+    clear: function() {
+      this._manager.clearState();
+    },
+    
+    cutItems: function(selection) {
+      this.copyItems(selection);
+      this.deleteItems(selection);
+    },
+
+    copyItems: function(selection) {
+      var copySelection = selection.map(function(item) {
+        return item.clone();
+      });
+      Clipboard.set(copySelection); 
+    },
+
+    pasteItems: function(point) {
+      var items = Clipboard.get();
+      var itemClones = items.map(function(item) {
+        return item.clone();
+      });
+      paper.project.activeLayer.addChildren(itemClones);
+      var oldCenter = PaperUtils.getCenter(itemClones);
+      var translateDelta = point.subtract(oldCenter);
+      for (var i = 0; i < items.length; i++) {
+        items.translate(translateDelta);
+      }
+    },
+
     setManager: function(manager) {
       this._manager = manager;
+    },
+
+    request: function(managerName, method, args) {
+      this._manager.handleRequest(managerName, method, args);
     }
   };
 

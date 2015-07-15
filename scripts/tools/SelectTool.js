@@ -10,7 +10,7 @@ define([
   var SelectTool = _.extend({}, BaseTool, {
 
     _downPoint: null,
-    _marqee: null,
+    _marquee: null,
     _tentative: null,
     selection: null,
     _handles: null,
@@ -23,21 +23,27 @@ define([
       if (breakFlag) { return; }
 
       var hitResult = paper.project.hitTest(event.point, Defaults.selectHitOptions);
-      
+      var rmvSuccess = false; 
       if (hitResult) {
         if (hitResult.item.selected) { return; }
-        this._clearSelection();
-        // this._removeSelection("marquee");
+        // this._clearSelection();
+        rmvSuccess = this.request("SelectionManager", "removeSelection", ["marquee"]);
+        if (rmvSuccess) {
+          this._removeSelectionUI();
+        }
         this._downPoint = event.point;
         this._tentative = hitResult.item;
       } else {
-        // this._removeSelection("marquee");
-        this._clearSelection(); 
+        rmvSuccess = this.request("SelectionManager", "removeSelection", ["marquee"]);
+        if (rmvSuccess) {
+          this._removeSelectionUI();
+        }
+        // this._clearSelection(); 
       } 
     },
     
     _clearSelection: function() {
-      if (this.selection) {
+      /*if (this.selection) {
         for (var i = 0; i < this.selection.length; i++) {
           this.selection[i].selected = false;
         }
@@ -50,12 +56,12 @@ define([
           this._handles[j].remove();
         }
         this._handles = null;
-      }
+      }*/
 
-      // var success = this.removeSelection("marquee");
-      // if (success) {
-      //  this._removeSelectionUI();
-      // }
+      var success = this.request("SelectionManager", "removeSelection", ["marquee"]);
+      if (success) {
+        this._removeSelectionUI();
+      }
     },
 
     _removeSelectionUI: function() {
@@ -76,44 +82,49 @@ define([
     },
 
     onMouseUp: function(event) {
-      // if (SelectionManager.hasSelection("marquee"))
-      if (this.selection) {
+      var check = this.request("SelectionManager", "hasSelection", ["marquee"]);
+      if (check) {
         var breakFlag = this._handlesMouseUp(event);
         if (breakFlag) { return; }
         this._moveMouseUp(event);
       } else {
-        this._marqeeMouseUp(event);
+        this._marqueeMouseUp(event);
       }
     },
     
-    _marqeeMouseUp: function(event) {
+    _marqueeMouseUp: function(event) {
       if (PaperUtils.tolerance(event.point, this._downPoint, 2)) {
         if (this._tentative) {
-          // SelectionManager.createSelection("marquee", [this.tentative])
-          this.selection = [this._tentative];  
+          this.request("SelectionManager", "createSelection", ["marquee", [this._tentative]]);
+          //this.selection = [this._tentative];  
         }
       } else {
-        var marqee = this._marqee;
-        // SelectionManager.createSelection("marquee", paper.project.getItems...)
-        this.selection = paper.project.getItems({
+        var marquee = this._marquee;
+        this.request("SelectionManager", "createSelection", ["marquee", paper.project.getItems({
           bounds: function(bounds) {
-            var topLeftCheck = bounds.topLeft.x > marqee.bounds.topLeft.x && 
-              bounds.topLeft.y > marqee.bounds.topLeft.y;
-            var bottomRightCheck = bounds.bottomRight.x < marqee.bounds.bottomRight.x && 
-              bounds.bottomRight.y < marqee.bounds.bottomRight.y;
+            var topLeftCheck = bounds.topLeft.x > marquee.bounds.topLeft.x && 
+              bounds.topLeft.y > marquee.bounds.topLeft.y;
+            var bottomRightCheck = bounds.bottomRight.x < marquee.bounds.bottomRight.x && 
+              bounds.bottomRight.y < marquee.bounds.bottomRight.y;
             return (topLeftCheck && bottomRightCheck);
           }
-        });
+        })]);
+        /*this.selection = paper.project.getItems({
+          bounds: function(bounds) {
+            var topLeftCheck = bounds.topLeft.x > marquee.bounds.topLeft.x && 
+              bounds.topLeft.y > marquee.bounds.topLeft.y;
+            var bottomRightCheck = bounds.bottomRight.x < marquee.bounds.bottomRight.x && 
+              bounds.bottomRight.y < marquee.bounds.bottomRight.y;
+            return (topLeftCheck && bottomRightCheck);
+          }
+        });*/
       }
-      if (this._marqee) { this._marqee.remove(); }
-      this._downPoint = this._tentative = this._marqee = null;
-      // if (SelectionManager.getSelection("marquee").length > 0)
-      if (this.selection) {
-        for (var i = 0; i < this.selection.length; i++) {
-          this.selection[i].selectedColor = Defaults.marqeeSelectColor;
-          this.selection[i].selected = true;
-        }
-        this.createBounds(this.selection);
+      if (this._marquee) { this._marquee.remove(); }
+      this._downPoint = this._tentative = this._marquee = null;
+      // if (this.selection) {
+      var selection = this.request("SelectionManager", "getSelection", ["marquee"]);
+      if (selection) {
+        this.createBounds(selection);
         this.createHandles(this._bounds);
       }
     },
@@ -123,33 +134,33 @@ define([
     },
 
     onMouseDrag: function(event) {
-      if (this.selection) {
+      if (this.request("SelectionManager", "hasSelection", ["marquee"])) {
         this._moveMouseDrag(event);
       } else {
-        this._marqeeMouseDrag(event);
+        this._marqueeMouseDrag(event);
       }
     },
 
-    _marqeeMouseDrag: function(event) {
-      // if marqee hasn't been created, create it!
-      if (!this._marqee) {
-        this._marqee = new paper.Path.Rectangle(this._downPoint, new paper.Size(1, 1));
-        this._marqee.style = Defaults.selectionBoundsStyle;
+    _marqueeMouseDrag: function(event) {
+      // if marquee hasn't been created, create it!
+      if (!this._marquee) {
+        this._marquee = new paper.Path.Rectangle(this._downPoint, new paper.Size(1, 1));
+        this._marquee.style = Defaults.selectionBoundsStyle;
       }
       // check how much mouse moved from start
       var deltaX = event.point.x - this._downPoint.x;
       var deltaY = event.point.y - this._downPoint.y;
      
       // scale the polygon back to new desired size
-      var widthScale = Math.abs(deltaX) / this._marqee.bounds.width;
-      var heightScale = Math.abs(deltaY) / this._marqee.bounds.height;
-      var scalePoint = this._marqee.bounds.topLeft;
+      var widthScale = Math.abs(deltaX) / this._marquee.bounds.width;
+      var heightScale = Math.abs(deltaY) / this._marquee.bounds.height;
+      var scalePoint = this._marquee.bounds.topLeft;
       if (widthScale > 0 && heightScale > 0) { 
-        this._marqee.scale(widthScale, heightScale, scalePoint);
+        this._marquee.scale(widthScale, heightScale, scalePoint);
       }
 
       // reposition the marquee to the new center
-      this._marqee.position = event.point.add(this._downPoint).divide(2);
+      this._marquee.position = event.point.add(this._downPoint).divide(2);
     },
 
     _moveMouseDrag: function(event) {
@@ -157,9 +168,9 @@ define([
       if (breakFlag) { return; }
       
       var delta = event.point.subtract(event.lastPoint);
-      // var selection = SelectionManager.getSelection("marquee");
-      for (var i = 0; i < this.selection.length; i++) {
-        this.selection[i].translate(delta.x, delta.y);
+      var selection = this.request("SelectionManager", "getSelection", ["marquee"]);
+      for (var i = 0; i < selection.length; i++) {
+        selection[i].translate(delta.x, delta.y);
       }
       this._bounds.translate(delta.x, delta.y);
       for (var j = 0; j < this._handles.length; j++) {
@@ -167,9 +178,7 @@ define([
       }
     },
 
-    onMouseMove: function(event) {
-    
-    },
+    onMouseMove: BaseTool.onMouseMove,
 
     createBounds: function(paths) {
       var corners = PaperUtils.getBounds(paths); 

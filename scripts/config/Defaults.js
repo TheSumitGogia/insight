@@ -50,7 +50,7 @@ define([
     },   
 
     representSelectColor: "#ff5050", 
-    marqeeSelectColor: "#ff5050" 
+    marqueeSelectColor: "#ff5050" 
   };
 
   return Defaults;

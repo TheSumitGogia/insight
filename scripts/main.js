@@ -41,6 +41,7 @@ define([
     ToolManager.setManager(Manager);
     ToolManager.setupTools();
     ModelManager.setManager(Manager);
-    PaperManager.setupPaper();
+    PaperManager.setManager(Manager);
+    PaperManager.setup();
   };
 });
