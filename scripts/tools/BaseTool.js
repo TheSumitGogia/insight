@@ -15,9 +15,9 @@ define([
       zoomKey: {key: ["d"], value: [false]},
       deleteKey: {key: ["delete"], value: [false]},
       clearKey: {key: ["end"], value: [false]},
-      cutKey: {key: ["control", "x"], value: [false, false]},
-      copyKey: {key: ["control", "c"], value: [false, false]},
-      pasteKey: {key: ["control", "v"], value: [false, false]} 
+      cutKey: {key: ["shift", "x"], value: [false, false]},
+      copyKey: {key: ["shift", "c"], value: [false, false]},
+      pasteKey: {key: ["shift", "v"], value: [false, false]} 
     },
 
     // NOTE: buggy, not in use
@@ -71,7 +71,6 @@ define([
           for (var i = 0; i < keyData.key.length; i++) {
             if (event.key === keyData.key[i]) {
               keyData.value[i] = true;
-              return;
             }
           }
         }
@@ -86,22 +85,27 @@ define([
           var foundFlag = false;
           for (var i = 0; i < keyData.key.length; i++) {
             if (event.key === keyData.key[i]) {
-              keyData.value[i] = false;
-              foundFlag = true;
+              foundFlag = (i + 1);
               break;
             }
           }
           if (foundFlag) {
             for (var j = 0; j < keyData.key.length; j++) {
-              if (!keyData.value[i]) { return; }
+              if (!keyData.value[j]) { 
+                return; 
+              }
             }
+            event.event.preventDefault();
+            keyData.value[foundFlag - 1] = false;
             this.handleKeyPress(key, event);
+            return;
           }
         }
       }
     },
 
     handleKeyPress: function(key, event) {
+      console.log(key);
       switch (key) {
         case "deleteKey":
           this.handleDelete(event);
@@ -123,6 +127,7 @@ define([
 
     handleDelete: function(event) {
       var selection = this.request("SelectionManager", "getCurrentSelection", []);
+      console.log("handleDelete", selection);
       if (selection) {
         this.request("PaperManager", "deleteItems", [selection]); 
       }
@@ -167,6 +172,14 @@ define([
 
     request: function(manager, method, args) {
       return this._manager.request(manager, method, args); 
+    },
+
+    setup: function() {
+    
+    },
+
+    cleanup: function() {
+    
     }
     
   };

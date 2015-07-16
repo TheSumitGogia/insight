@@ -85,7 +85,7 @@ define([
 
     copyItems: function(selection) {
       var copySelection = selection.map(function(item) {
-        return item.clone();
+        return item.clone(false);
       });
       Clipboard.set(copySelection); 
     },
@@ -98,8 +98,8 @@ define([
       paper.project.activeLayer.addChildren(itemClones);
       var oldCenter = PaperUtils.getCenter(itemClones);
       var translateDelta = point.subtract(oldCenter);
-      for (var i = 0; i < items.length; i++) {
-        items.translate(translateDelta);
+      for (var i = 0; i < itemClones.length; i++) {
+        itemClones[i].translate(translateDelta);
       }
     },
 

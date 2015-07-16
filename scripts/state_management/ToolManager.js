@@ -73,8 +73,10 @@ define([
     },
 
     switchTool: function(tool) {
+      this.tools[this._currentTool].cleanup();
       this._currentTool = tool;
       this.tools[tool].activate();
+      this.tools[tool].setup();
       console.log(tool + " activated!");
     
       // seems a little odd, but really should be here since paper

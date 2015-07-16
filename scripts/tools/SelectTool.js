@@ -12,11 +12,32 @@ define([
     _downPoint: null,
     _marquee: null,
     _tentative: null,
-    selection: null,
     _handles: null,
     _activeHandle: null,
     _bounds: null,
 
+    setup: function() {
+      this.request("SelectionManager", "setCurrentSelector", ["marquee"]);  
+    },
+
+    cleanup: function() {
+      if (this._marquee) {
+        this._marquee.remove();
+        this._marquee = null;
+      }
+      this._tentative = null;
+      this._downPoint = null;
+      if (this._handles) {
+        for (var i = 0; i < this._handles.length; i++) {
+          this._handles[i].remove();
+        }
+        this._activeHandle = null;
+      }
+      if (this._bounds) {
+        this._bounds.remove();
+        this._bounds = null;
+      }
+    },
 
     onMouseDown: function(event) {
       var breakFlag = this._handlesMouseDown(event);

@@ -82,7 +82,7 @@ define([
     getCenter: function(paths) {
       var bounds = this.getBounds(paths);
       var min = new paper.Point(bounds.xMin, bounds.yMin);
-      var max = new paper.Point(bounds.xMas, bounds.yMax);
+      var max = new paper.Point(bounds.xMax, bounds.yMax);
       return new paper.Point(min.add(max).divide(2));
     }
 
