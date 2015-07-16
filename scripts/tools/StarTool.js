@@ -2,8 +2,9 @@ define([
   "paper",
   "underscore",
   "config/Defaults",
-  "tools/BaseCreateTool"
-], function(paper, _, Defaults, BaseCreateTool) {
+  "tools/BaseCreateTool",
+  "objects/Geometry"
+], function(paper, _, Defaults, BaseCreateTool, Geometry) {
   
   var StarTool = _.extend({}, BaseCreateTool, {
     _currentPath: null,
@@ -27,13 +28,13 @@ define([
     _innerMouseDown: function(event) {
       console.log("Starting star creation...");
       this._startPoint = event.point;
-      this._currentPath = new paper.Path.Circle(event.point, 1);
+      this._currentPath = new Geometry.Path.Circle(event.point, 1);
       this._currentPath.style = Defaults.tentativeStyle;
     },
 
     _outerMouseDown: function(event) {
       this._currentPath.remove();
-      this._currentPath = new paper.Path.Star(
+      this._currentPath = new Geometry.Path.Star(
         this._startPoint, 
         this._params.numPoints, 
         this._params.inRadius, 

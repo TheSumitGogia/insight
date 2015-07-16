@@ -18,7 +18,6 @@ define([
       if (!this._subscriberMap[subscriber]) {
         this._subscriberMap[subscriber] = [];
       }
-
       var listenerArray = this._listenerMap[target][op];
       listenerArray.push({
         subscriber: subscriber,
@@ -82,7 +81,8 @@ define([
     },
 
     dispatch: function(target, op, args) {
-      var listenerArray = this._listenerArray[target][op];
+      if (!this._listenerMap[target]) { return; }
+      var listenerArray = this._listenerMap[target][op];
       if (listenerArray) {
         for (var i = 0; i < listenerArray.length; i++) {
           var listener = listenerArray[i];

@@ -2,8 +2,9 @@ define([
   "paper",
   "underscore",
   "config/Defaults", 
-  "tools/BaseCreateTool"
-], function(paper, _, Defaults, BaseCreateTool) {
+  "tools/BaseCreateTool",
+  "objects/Geometry"
+], function(paper, _, Defaults, BaseCreateTool, Geometry) {
   
   var EllipseTool = _.extend({}, BaseCreateTool, {
     _currentPath: null,
@@ -13,7 +14,7 @@ define([
 
     onMouseDown: function(event) {
       console.log("Starting ellipse creation...");
-      this._currentPath = new paper.Path.Ellipse(new paper.Rectangle(event.point, new paper.Size(1, 1)));
+      this._currentPath = new Geometry.Path.Ellipse(new paper.Rectangle(event.point, new paper.Size(1, 1)));
       this._currentPath.style = Defaults.tentativeStyle;
       this._startDragPoint = event.point;
     },

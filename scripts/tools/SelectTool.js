@@ -4,8 +4,10 @@ define([
   "config/Defaults",
   "utils/PaperUtils",
   "tools/BaseTool",
-  "state_management/EventManager"
-], function(paper, _, Defaults, PaperUtils, BaseTool, EventManager) {
+  "state_management/EventManager",
+  "tools/ui/select/Bounds",
+  "tools/ui/select/Handles"
+], function(paper, _, Defaults, PaperUtils, BaseTool, EventManager, Bounds, Handles) {
   
   var SelectTool = _.extend({}, BaseTool, {
 
@@ -62,7 +64,10 @@ define([
         // this._clearSelection(); 
       } 
     },
-    
+   
+    /*
+     * @deprecated - selection removal now handled by SelectionManager
+     */ 
     _clearSelection: function() {
       /*if (this.selection) {
         for (var i = 0; i < this.selection.length; i++) {
@@ -145,8 +150,9 @@ define([
       // if (this.selection) {
       var selection = this.request("SelectionManager", "getSelection", ["marquee"]);
       if (selection) {
-        this.createBounds(selection);
-        this.createHandles(this._bounds);
+        //this.createBounds(selection);
+        this._bounds = Bounds(selection); 
+        this._handles = Handles(this._bounds);
       }
     },
 
@@ -193,57 +199,13 @@ define([
       for (var i = 0; i < selection.length; i++) {
         selection[i].translate(delta.x, delta.y);
       }
-      this._bounds.translate(delta.x, delta.y);
-      for (var j = 0; j < this._handles.length; j++) {
+      //this._bounds.translate(delta.x, delta.y);
+      /*for (var j = 0; j < this._handles.length; j++) {
         this._handles[j].translate(delta.x, delta.y);
-      }
+      }*/
     },
 
     onMouseMove: BaseTool.onMouseMove,
-
-    createBounds: function(paths) {
-      var corners = PaperUtils.getBounds(paths); 
-      var boundsSize = new paper.Size(corners.xMax - corners.xMin, corners.yMax - corners.yMin);
-      var bounds = new paper.Path.Rectangle(new paper.Point(corners.xMin, corners.yMin), boundsSize);
-      bounds.style = Defaults.boundsStyle;
-
-      var linComboArray = [[0, 0], [0.5, 0], [1, 0], [0, 0.5], [1, 0.5], [0, 1], [0.5, 1], [1, 1]];
-      var boundsPointForm = new paper.Point(boundsSize.width, boundsSize.height);
-      var boundDots = [];
-      for (var i = 0; i < linComboArray.length; i++) {
-        var linCombo = new paper.Point(linComboArray[i]);
-        var dotPoint = linCombo.multiply(boundsPointForm).add(new paper.Point(corners.xMin, corners.yMin));
-        var boundDot = new paper.Path.Circle(dotPoint, 2);
-        boundDot.style = Defaults.boundsStyle;
-        boundDot.name = "boundDot" + i;
-        boundDot.fillColor = "#ffffff";
-        boundDots.push(boundDot);
-      }
-      var boundsGroup = new paper.Group([bounds]);
-      boundsGroup.addChildren(boundDots);
-      boundsGroup.type = "ui";
-      boundsGroup.name = "bounds";
-      boundsGroup.linkedGeometry = paths;
-      boundsGroup.bringToFront();
-      // actually just redraws dots
-      boundsGroup.redraw = function() {
-        for (var i = 0; i < linComboArray.length; i++) {
-          var ncorners = PaperUtils.getBounds(this.linkedGeometry); 
-          var nBoundsSize = new paper.Size(ncorners.xMax - ncorners.xMin, ncorners.yMax - ncorners.yMin);
-          var scaleF = nBoundsSize.divide(this.children[0].bounds.size);
-          this.children[0].scale(scaleF.width, scaleF.height);
-          var newCenter = new paper.Point((ncorners.xMax + ncorners.xMin) / 2, (ncorners.yMax + ncorners.yMin) / 2);
-
-          this.children[0].position = newCenter; 
-          var linCombo = new paper.Point(linComboArray[i]);
-          var boundsPointForm = new paper.Point(nBoundsSize.width, nBoundsSize.height);
-          var dotPoint = linCombo.multiply(boundsPointForm).add(new paper.Point(ncorners.xMin, ncorners.yMin));
-          boundDots[i].position = dotPoint;
-        } 
-      };
-      this._bounds = boundsGroup;
-    
-    },
 
     createHandles: function(bounds) {
       var scaleHandle = new paper.Path([
@@ -300,8 +262,6 @@ define([
     },
 
     _createHandleListeners: function() {
-      var that = this;
-      var tool = that;
       var handles = this._handles;
       var linkedBounds = this._bounds;
       for (var i = 0; i < handles.length; i++) {
@@ -320,11 +280,11 @@ define([
 
     _handlesMouseDown: function(event) {
       var hitResult = paper.project.hitTest(event.point, Defaults.selectHitOptions);
-      if (hitResult && hitResult.item.type === "handle") {
+      if (hitResult && hitResult.item.name === "handle") {
         var handle = hitResult.item;
         if (!handle.active) {
           handle.active = true;
-          this.activeHandle = handle;
+          this._handles.activeHandle = handle;
         }
         return true;
       }
@@ -332,28 +292,28 @@ define([
     },
 
     _handlesMouseUp: function(event) {
-      if (this.activeHandle) {
-        this.activeHandle.active = false;
-        this.activeHandle = null;
+      if (this._handles.activeHandle) {
+        this._handles.activeHandle.active = false;
+        this._handles.activeHandle = null;
         return true;
       }
       return false;
     },
 
     _handlesMouseDrag: function(event) {
-      if (this.activeHandle) {
-        var opposingHandle = this.activeHandle.opposite;
+      if (this._handles.activeHandle) {
+        var opposingHandle = this._handles.activeHandle.opposite;
         var linkedGeometry = opposingHandle.linkedBounds.linkedGeometry;
         var scales = event.point.subtract(opposingHandle.position)
           .divide(event.lastPoint.subtract(opposingHandle.position));
-        if (this.activeHandle.position.x === opposingHandle.position.x) { scales.x = 1; }
-        if (this.activeHandle.position.y === opposingHandle.position.y) { scales.y = 1; } 
+        if (this._handles.activeHandle.position.x === opposingHandle.position.x) { scales.x = 1; }
+        if (this._handles.activeHandle.position.y === opposingHandle.position.y) { scales.y = 1; } 
         // TODO: godawful problem with paths not remaining if group is removed
         // so use array of geometry for now...
         for (var i = 0; i < linkedGeometry.length; i++) { 
           linkedGeometry[i].scale(scales.x, scales.y, opposingHandle.position);
         }
-        this._bounds.redraw();
+        //this._bounds.redraw();
         this._handles.redraw();
         return true;
       } 

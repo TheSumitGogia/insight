@@ -16,7 +16,7 @@ define([
     },
 
     addListener: function(target, op, callback) {
-      EventManager.addListener(target, op, callback);
+      EventManager.addListener(this, target, op, callback);
     }
   };
 

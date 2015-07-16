@@ -2,8 +2,9 @@ define([
   "paper",
   "underscore",
   "config/Defaults",
+  "objects/Geometry",
   "tools/BaseCreateTool"
-], function(paper, _, Defaults, BaseCreateTool) {
+], function(paper, _, Defaults, Geometry, BaseCreateTool) {
   
   var PolygonTool = _.extend({}, BaseCreateTool, {
     _currentPath: null,
@@ -14,7 +15,7 @@ define([
 
     onMouseDown: function(event) {
       console.log("Starting polygon creation...");
-      this._currentPath = new paper.Path.RegularPolygon(event.point, this._params.numSides, 1);
+      this._currentPath = Geometry.Path.RegularPolygon(event.point, this._params.numSides, 1);
       this._currentPath.style = Defaults.tentativeStyle; 
     },
 

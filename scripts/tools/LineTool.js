@@ -2,8 +2,9 @@ define([
   "paper",
   "underscore",
   "config/Defaults",
-  "tools/BaseCreateTool"
-], function(paper, _, Defaults, BaseCreateTool) {
+  "tools/BaseCreateTool",
+  "objects/Geometry"
+], function(paper, _, Defaults, BaseCreateTool, Geometry) {
   
   var LineTool = _.extend({}, BaseCreateTool, {
     _currentPath: null,
@@ -11,7 +12,7 @@ define([
     
     onMouseDown: function(event) {
       console.log("Starting line creation...");
-      this._currentPath = new paper.Path.Line(event.point, event.point);
+      this._currentPath = new Geometry.Path.Line(event.point, event.point);
       this._currentPath.style = Defaults.tentativeStyle;
       this._currentPath.style.strokeWidth = 1;
     },
@@ -20,7 +21,6 @@ define([
       this._currentPath.style = Defaults.committedStyle;
       this._currentPath.style.strokeWidth = 1;
       console.log("Created line! ^^"); 
-      console.log(this._currentPath);
     },
 
     onMouseDrag: function(event) {
