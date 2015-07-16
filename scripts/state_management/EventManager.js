@@ -77,6 +77,8 @@ define([
             delete this._listenerMap[checkObj.target][checkObj.op]; 
           }
         }
+        subscriberArray = null;
+        delete this._subscriberMap[subscriber];
       }
     },
 

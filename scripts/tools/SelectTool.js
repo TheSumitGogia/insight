@@ -19,7 +19,13 @@ define([
     _bounds: null,
 
     setup: function() {
-      this.request("SelectionManager", "setCurrentSelector", ["marquee"]);  
+      this.request("SelectionManager", "setCurrentSelector", ["marquee"]); 
+      var selection = this.request("SelectionManager", "getSelection", ["marquee"]);
+      if (selection) {
+        this._bounds = Bounds(selection);
+        this._handles = Handles(this._bounds);
+        this._createHandleListeners();
+      } 
     },
 
     cleanup: function() {
@@ -30,6 +36,7 @@ define([
       this._tentative = null;
       this._downPoint = null;
       if (this._handles) {
+        this._handles.removeListeners();
         for (var i = 0; i < this._handles.length; i++) {
           this._handles[i].remove();
         }
@@ -61,7 +68,6 @@ define([
         if (rmvSuccess) {
           this._removeSelectionUI();
         }
-        // this._clearSelection(); 
       } 
     },
    
@@ -101,6 +107,7 @@ define([
     },
 
     _removeHandles: function() {
+      this._handles.removeListeners();
       for (var i = 0; i < this._handles.length; i++) {
         this._handles[i].remove();
       }
@@ -135,24 +142,15 @@ define([
             return (topLeftCheck && bottomRightCheck);
           }
         })]);
-        /*this.selection = paper.project.getItems({
-          bounds: function(bounds) {
-            var topLeftCheck = bounds.topLeft.x > marquee.bounds.topLeft.x && 
-              bounds.topLeft.y > marquee.bounds.topLeft.y;
-            var bottomRightCheck = bounds.bottomRight.x < marquee.bounds.bottomRight.x && 
-              bounds.bottomRight.y < marquee.bounds.bottomRight.y;
-            return (topLeftCheck && bottomRightCheck);
-          }
-        });*/
       }
       if (this._marquee) { this._marquee.remove(); }
       this._downPoint = this._tentative = this._marquee = null;
       // if (this.selection) {
       var selection = this.request("SelectionManager", "getSelection", ["marquee"]);
       if (selection) {
-        //this.createBounds(selection);
         this._bounds = Bounds(selection); 
         this._handles = Handles(this._bounds);
+        this._createHandleListeners();
       }
     },
 
@@ -199,67 +197,9 @@ define([
       for (var i = 0; i < selection.length; i++) {
         selection[i].translate(delta.x, delta.y);
       }
-      //this._bounds.translate(delta.x, delta.y);
-      /*for (var j = 0; j < this._handles.length; j++) {
-        this._handles[j].translate(delta.x, delta.y);
-      }*/
     },
 
     onMouseMove: BaseTool.onMouseMove,
-
-    createHandles: function(bounds) {
-      var scaleHandle = new paper.Path([
-        new paper.Point(50, 50),
-        new paper.Point(80, 20),
-        new paper.Point(80, 35),
-        new paper.Point(120, 35),
-        new paper.Point(120, 20),
-        new paper.Point(150, 50),
-        new paper.Point(120, 80),
-        new paper.Point(120, 65),
-        new paper.Point(80, 65),
-        new paper.Point(80, 80)
-      ]);
-      scaleHandle.closed = true;
-      scaleHandle.style = Defaults.handleStyle;
-      scaleHandle.scale(0.2);
-
-      var mapHandleToBoundPoint = {
-        0: 3,
-        1: 0,
-        2: 1,
-        3: 2,
-        4: 4,
-        5: 7,
-        6: 6,
-        7: 5
-      };
-
-      var scaleHandles = [];
-      for (var i = 0; i < 8; i++) {
-        var newHandle = i === 0 ? scaleHandle : scaleHandle.clone({insert: true});
-        newHandle.rotate(45 * i);
-        var boundPointMatch = bounds.getItem({name: ("boundDot" + mapHandleToBoundPoint[i])});
-        newHandle.position = boundPointMatch.position;
-        newHandle.type = "handle";
-        scaleHandles.push(newHandle);
-      }
-      for (var j = 0; j < 8; j++) {
-        scaleHandles[j].opposite = scaleHandles[(j + 4) % 8];
-        scaleHandles[j].linkedBounds = bounds;
-        scaleHandles[j].bringToFront();
-      }
-      scaleHandles.redraw = function() {
-        for (var i = 0; i < this.length; i++) {
-          var boundPointMatch = bounds.getItem({name: ("boundDot" + mapHandleToBoundPoint[i])});
-          this[i].position = boundPointMatch.position; 
-        }                          
-      };
-
-      this._handles = scaleHandles;
-      this._createHandleListeners();
-
-    },
 
     _createHandleListeners: function() {
       var handles = this._handles;
@@ -303,7 +243,7 @@ define([
     _handlesMouseDrag: function(event) {
       if (this._handles.activeHandle) {
         var opposingHandle = this._handles.activeHandle.opposite;
-        var linkedGeometry = opposingHandle.linkedBounds.linkedGeometry;
+        var linkedGeometry = opposingHandle.container._bounds._linkedGeometry;
         var scales = event.point.subtract(opposingHandle.position)
           .divide(event.lastPoint.subtract(opposingHandle.position));
         if (this._handles.activeHandle.position.x === opposingHandle.position.x) { scales.x = 1; }
@@ -314,7 +254,7 @@ define([
           linkedGeometry[i].scale(scales.x, scales.y, opposingHandle.position);
         }
         //this._bounds.redraw();
-        this._handles.redraw();
+        //this._handles.redraw();
         return true;
       } 
       return false;

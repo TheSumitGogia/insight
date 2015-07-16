@@ -61,11 +61,11 @@ define([
       newHandle.position = boundPointMatch.position;
       newHandle.type = "ui";
       newHandle.name = "handle";
+      newHandle.container = scaleHandles;
       scaleHandles.push(newHandle);
     }
     for (var j = 0; j < 8; j++) {
       scaleHandles[j].opposite = scaleHandles[(j + 4) % 8];
-      scaleHandles[j].linkedBounds = bounds;
       scaleHandles[j].bringToFront();
     } 
     
