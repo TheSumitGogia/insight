@@ -15,25 +15,26 @@ define([
     var originalTranslate = group.translate;
     group.translate = function() {
       originalTranslate.apply(this, arguments);
-      this.dispatch(this, "translate", arguments);
+      this.dispatch("translate", arguments);
     };
 
     var originalScale = group.scale;
     group.scale = function() {
       originalScale.apply(this, arguments);
-      this.dispatch(this, "scale", arguments);
+      this.dispatch("scale", arguments);
     };
 
     var originalRotate = group.rotate;
     group.rotate = function() {
       originalRotate.apply(this, arguments);
-      this.dispatch(this, "rotate", arguments);
+      this.dispatch("rotate", arguments);
     };
 
     var originalRemove = group.remove;
     group.remove = function() {
       originalRemove.apply(this, arguments);
       this.removeListeners();
+      this.dispatch("remove", []);
     };
   };
 

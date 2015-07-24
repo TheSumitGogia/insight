@@ -10,6 +10,7 @@ define([
     _linkedGeometry: null,
     _linComboArray: null,
     _boundDots: null,
+    _removalCounter: 0,
 
     redraw: function() {
       var corners = PaperUtils.getBounds(this._linkedGeometry);
@@ -42,6 +43,12 @@ define([
         });
         this.addListener(this._linkedGeometry[i], "rotate", function(args) {
           this.redraw();
+        });
+        this.addListener(this._linkedGeometry[i], "remove", function(args) {
+          this._removalCounter += 1;
+          if (this._removalCounter == this._linkedGeometry.length) {
+            this.remove();
+          } 
         });
       } 
     } 

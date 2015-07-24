@@ -1,9 +1,10 @@
 define([
   "paper",
   "underscore",
-  "state_management/EventsMixin"
-], function(paper, _, EventsMixin) {
-  
+  "state_management/EventsMixin",
+  "objects/Index/Index"
+], function(paper, _, EventsMixin, Index) {
+
   var PathExtension = {
   
   };
@@ -12,25 +13,35 @@ define([
     var originalTranslate = path.translate;
     path.translate = function() {
       originalTranslate.apply(this, arguments);
-      this.dispatch("translate", arguments);
+      Index.addToUpdate(this);
     };
     
     var originalScale = path.scale;
     path.scale = function() {
       originalScale.apply(this, arguments);
       this.dispatch("scale", arguments);
+      Index.addToUpdate(this);
     };
 
     var originalRotate = path.rotate;
     path.rotate = function() {
       originalRotate.apply(this, arguments);
       this.dispatch("rotate", arguments);
+      Index.addToUpdate(this);
     };
 
     var originalRemove = path.remove;
     path.remove = function() {
       originalRemove.apply(this, arguments);
       this.removeListeners();
+      this.dispatch("remove", []);
+      Index.remove(this);
+    };
+    
+    var oldSet = path._style.set;
+    path._style.set = function(props) {
+      oldSet.call(path._style, props);
+      Index.addToUpdate(path);
     };
 
   };
@@ -41,6 +52,7 @@ define([
 
     PathOverrides(path);
     _.extend(path, EventsMixin, PathExtension);
+
     return path;
   };
 
@@ -54,6 +66,7 @@ define([
 
         PathOverrides(path);
         _.extend(path, EventsMixin, PathExtension);
+        
         return path;
       };
       return newFactory;

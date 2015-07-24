@@ -142,14 +142,16 @@ define([
       }
     },
 
+    _findSimilar: function(repObject, metric, tolerance) {
+      // get metric index
+      // perform ball query from repObject
+    },
+
     onMouseDrag: function(event) {
     
     },
 
-    onMouseMove: function(event) {
-    
-    }
-
+    onMouseMove: BaseTool.onMouseMove
   });
   return RepresentTool;
 });

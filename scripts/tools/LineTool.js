@@ -28,9 +28,7 @@ define([
       this._currentPath.addSegments([event.point]); 
     },
 
-    onMouseMove: function(event) {
-    
-    } 
+    onMouseMove: BaseCreateTool.onMouseMove
   });
   return LineTool; 
 });

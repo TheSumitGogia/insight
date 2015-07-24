@@ -94,9 +94,7 @@ define([
       this._currentPath.rotate(angle);
     },
 
-    onMouseMove: function(event) {
-    
-    }    
+    onMouseMove: BaseCreateTool.onMouseMove 
   });
   return StarTool; 
 });

@@ -161,6 +161,7 @@ define([
       } else if (this.actionKeys.panXKey.value[0]) {
         this.request("PaperManager", "stepCenter", [event.deltaY, event.deltaX, event.deltaFactor]);
       } else if (this.actionKeys.zoomKey.value[0]) {
+        console.log(this._mousePoint);
         this.request("PaperManager", "stableStepZoom", [event.deltaY, this._mousePoint]);
       }
       event.preventDefault(); 

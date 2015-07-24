@@ -35,16 +35,10 @@ define([
       }
       this._tentative = null;
       this._downPoint = null;
-      if (this._handles) {
-        this._handles.removeListeners();
-        for (var i = 0; i < this._handles.length; i++) {
-          this._handles[i].remove();
-        }
-        this._activeHandle = null;
-      }
       if (this._bounds) {
         this._bounds.remove();
         this._bounds = null;
+        this._handles = null;
       }
     },
 
@@ -56,7 +50,6 @@ define([
       var rmvSuccess = false; 
       if (hitResult) {
         if (hitResult.item.selected) { return; }
-        // this._clearSelection();
         rmvSuccess = this.request("SelectionManager", "removeSelection", ["marquee"]);
         if (rmvSuccess) {
           this._removeSelectionUI();
@@ -98,7 +91,7 @@ define([
 
     _removeSelectionUI: function() {
       this._removeBounds();
-      this._removeHandles();
+      this._handles = null;
     },
 
     _removeBounds: function() {
@@ -129,7 +122,6 @@ define([
       if (PaperUtils.tolerance(event.point, this._downPoint, 2)) {
         if (this._tentative) {
           this.request("SelectionManager", "createSelection", ["marquee", [this._tentative]]);
-          //this.selection = [this._tentative];  
         }
       } else {
         var marquee = this._marquee;
@@ -145,7 +137,6 @@ define([
       }
       if (this._marquee) { this._marquee.remove(); }
       this._downPoint = this._tentative = this._marquee = null;
-      // if (this.selection) {
       var selection = this.request("SelectionManager", "getSelection", ["marquee"]);
       if (selection) {
         this._bounds = Bounds(selection); 
@@ -253,8 +244,6 @@ define([
         for (var i = 0; i < linkedGeometry.length; i++) { 
           linkedGeometry[i].scale(scales.x, scales.y, opposingHandle.position);
         }
-        //this._bounds.redraw();
-        //this._handles.redraw();
         return true;
       } 
       return false;

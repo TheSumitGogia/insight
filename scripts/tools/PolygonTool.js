@@ -3,8 +3,9 @@ define([
   "underscore",
   "config/Defaults",
   "objects/Geometry",
-  "tools/BaseCreateTool"
-], function(paper, _, Defaults, Geometry, BaseCreateTool) {
+  "tools/BaseCreateTool",
+  "objects/Index/Index"
+], function(paper, _, Defaults, Geometry, BaseCreateTool, Index) {
   
   var PolygonTool = _.extend({}, BaseCreateTool, {
     _currentPath: null,
@@ -21,6 +22,8 @@ define([
 
     onMouseUp: function(event) {
       this._currentPath.style = Defaults.committedStyle;
+      Index.insert(this._currentPath);
+      this._currentPath = null;
       console.log("Created polygon! ^^");
     },
 

@@ -9,11 +9,23 @@ define([
       strokeColor: "#a3e5f6",
       strokeWidth: 0
     },
-  
+
+    tentative2DStyle: {
+      fillColor: new paper.Color(0.64, 0.90, 0.965, 0),
+      strokeColor: "#a3e5f6",
+      strokeWidth: 1
+    },
+
     committedStyle: {
       fillColor: "#0093b8",
       strokeColor: "#0093b8",
       strokeWidth: 0
+    },
+
+    committed2DStyle: {
+      fillColor: new paper.Color(0, 0.576, 0.722, 0),
+      strokeColor: "#0093b8",
+      strokeWidth: 1
     },
 
     boundsStyle: {

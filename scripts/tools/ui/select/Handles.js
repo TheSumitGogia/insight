@@ -20,7 +20,13 @@ define([
     },
 
     addListeners: function() {
-      this.addListener(this._bounds, "redraw", this.redraw);  
+      this.addListener(this._bounds, "redraw", this.redraw);
+      this.addListener(this._bounds, "remove", function(args) {
+        this.removeListeners();
+        for (var i = 0; i < this.length; i++) {
+          this[i].remove();
+        }
+      });  
     }
   };
 

@@ -54,9 +54,7 @@ define([
       } 
     },
 
-    onMouseMove: function(event) {
-    
-    }    
+    onMouseMove: BaseCreateTool.onMouseMove 
   });
   return EllipseTool; 
 });

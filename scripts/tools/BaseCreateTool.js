@@ -5,7 +5,10 @@ define([
 ], function(paper, _, BaseTool) {
   
   var BaseCreateTool = _.extend({}, BaseTool, {
-    onMouseMove: BaseTool.onMouseMove    
+    onMouseMove: BaseTool.onMouseMove,   
+    setup: function() {
+      this.request("SelectionManager", "removeAllSelections", []);
+    }
   });
   return BaseCreateTool;
 });

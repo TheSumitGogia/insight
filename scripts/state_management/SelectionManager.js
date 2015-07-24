@@ -49,6 +49,19 @@ define([
         return false;
       } 
     },
+  
+    removeAllSelections: function() {
+      for (var name in this._selections) {
+        if (this._selections.hasOwnProperty(name)) {
+          var selection = this._selections[name];
+          for (var i = 0; i < selection.length; i++) {
+            selection[i].selected = false;
+          }
+          this._selections[name] = null;
+          delete this._selections[name];
+        }
+      }
+    },
 
     getSelection: function(name) {
       if (this._selections.hasOwnProperty(name)) {
