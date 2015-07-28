@@ -7,7 +7,8 @@ define([
 
   var ScaleXIndex = _.extend({
     metric: "bounds.width",
-    type: "numeric"
+    type: "numeric",
+    data: {}
   }, BasicIndex);
 
   return ScaleXIndex;

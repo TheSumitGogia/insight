@@ -28,7 +28,7 @@ define([
         if (check) { return true; }
       }
       return false;
-    } 
+    }
   };
 
   return ArrayUtils;

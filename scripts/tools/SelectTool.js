@@ -26,6 +26,12 @@ define([
         this._handles = Handles(this._bounds);
         this._createHandleListeners();
       } 
+
+      var allObjects = paper.project.activeLayer.children;
+      allObjects[0].prototype.onMouseEnter = function(event) {
+        console.log("hot");
+      };
+      allObjects[0].onMouseEnter = allObjects[0].prototype.onMouseEnter; 
     },
 
     cleanup: function() {

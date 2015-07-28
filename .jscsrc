@@ -19,7 +19,7 @@
     "disallowImplicitTypeConversion": ["numeric", "binary", "string"],
     "disallowKeywordsOnNewLine": ["else"],
     "requireCapitalizedConstructors": true,
-    "safeContextKeyword": [ "that", "self" ],
+    "safeContextKeyword": [ "that", "self", "tool" ],
     "requireCurlyBraces": [
         "if",
         "else",

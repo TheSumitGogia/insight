@@ -62,6 +62,7 @@ define([
     },   
 
     representSelectColor: "#ff5050", 
+    searchSelectColor: "#ff5050",
     marqueeSelectColor: "#ff5050" 
   };
 

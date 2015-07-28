@@ -5,10 +5,11 @@ define([
   "objects/Index/BasicIndex"
 ], function(paper, _, PaperUtils, BasicIndex) {
 
-  var FillColorIndex = _.extend({
+  var FillColorIndex = _.extend({}, BasicIndex, {
     metric: "fillColor",
-    type: "color"
-  }, BasicIndex);
+    type: "color",
+    data: {}
+  });
 
   return FillColorIndex;
 });

@@ -7,7 +7,8 @@ define([
 
   var StrokeWidthIndex = _.extend({
     metric: "strokeWidth",
-    type: "numeric"
+    type: "numeric",
+    data: {}
   }, BasicIndex);
 
   return StrokeWidthIndex;

@@ -18,7 +18,7 @@ define([
       "polygon", 
       "pen", 
       "represent", 
-      "group"
+      "search"
     ];
     source = document.getElementById("toolbarTemplate").innerHTML;
     template = Handlebars.default.compile(source);

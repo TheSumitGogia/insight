@@ -19,15 +19,20 @@ define([
   var Index = {
 
     _globalIDCounter: 0,
+    _objectMap: {},
 
     _indexes: {
-      "strokeColorIndex": StrokeColorIndex,
+      //"strokeColorIndex": StrokeColorIndex,
       "fillColorIndex": FillColorIndex,
       "positionXIndex": PositionXIndex,
-      "positionYIndex": PositionYIndex,
-      "scaleXIndex": ScaleXIndex,
-      "scaleYIndex": ScaleYIndex,
-      "strokeWidthIndex": StrokeWidthIndex      
+      "positionYIndex": PositionYIndex
+      //"scaleXIndex": ScaleXIndex,
+      //"scaleYIndex": ScaleYIndex,
+      //"strokeWidthIndex": StrokeWidthIndex      
+    },
+
+    getObjectByID: function(id) {
+      return this._objectMap[id];
     },
 
     ballQuery: function(object, metric, tolerance) {
@@ -48,8 +53,10 @@ define([
     insert: function(object) {
       object.identifier = this._globalIDCounter;
       this._globalIDCounter += 1;
+      this._objectMap[object.identifier] = object;
       for (var index in this._indexes) {
         if (this._indexes.hasOwnProperty(index)) {
+          console.log("Inserting at Index into", this._indexes[index].metric);
           this._indexes[index].insert(object);
         }
       }

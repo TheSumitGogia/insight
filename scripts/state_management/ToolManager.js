@@ -13,6 +13,7 @@ define([
   "tools/PolygonTool",
   "tools/PenTool",
   "tools/RepresentTool",
+  "tools/SearchTool",
   "tools/GroupTool"
 ], function(
   paper, 
@@ -28,7 +29,8 @@ define([
   StarTool, 
   PolygonTool, 
   PenTool, 
-  RepresentTool, 
+  RepresentTool,
+  SearchTool, 
   GroupTool
 ) {
 
@@ -44,7 +46,7 @@ define([
       "polygon": PolygonTool,
       "pen": PenTool,
       "represent": RepresentTool,
-      "group": GroupTool
+      "search": SearchTool
     },
 
     setupTools: function() {

@@ -5,10 +5,11 @@ define([
   "objects/Index/BasicIndex"
 ], function(paper, _, PaperUtils, BasicIndex) {
 
-  var PositionYIndex = _.extend({
+  var PositionYIndex = _.extend({}, BasicIndex, {
     metric: "position.y",
-    type: "numeric"
-  }, BasicIndex);
+    type: "numeric",
+    data: {}
+  });
 
   return PositionYIndex;
 });

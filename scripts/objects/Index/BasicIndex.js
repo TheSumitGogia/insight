@@ -11,10 +11,13 @@ define([
     ballQuery: function(object, tolerance) {
       var objectID = object.identifier;
       var objectRow = this.data[objectID];
+      console.log("object row", objectRow);
       var ball = [];
-      for (var i = 0; i < objectRow.length; i++) {
-        if (objectRow[i] < tolerance) {
-          ball.push(i);
+      for (var id in objectRow) {
+        if (objectRow.hasOwnProperty(id)) {
+          if (objectRow[id].distance <= tolerance && objectRow[id].id !== objectID) {
+            ball.push(objectRow[id].id);
+          }
         }
       }
       return ball;
@@ -30,6 +33,7 @@ define([
     },
 
     insert: function(object) {
+      console.log("inserting", this.metric, this.type);
       var allObjects = paper.project.activeLayer.children;
       var metricName = this.metric;
       var metricType = this.type;
@@ -69,12 +73,15 @@ define([
     addToUpdate: function(object) {
       // possible slight read-write optimization here...
       console.log("caught update");
-      this._modifiedList[object.identifier] = true;
+      this._modifiedList[object.identifier] = object;
     },
 
     update: function() {
-      for (var i = 0; i < this._modifiedList; i++) {
-        this.modify(this.data[this._modifiedList[i]]);
+      for (var id in this._modifiedList) {
+        if (this._modifiedList.hasOwnProperty(id)) {
+          
+          this.modify(this._modifiedList[id]);
+        }
       }
     }
   };

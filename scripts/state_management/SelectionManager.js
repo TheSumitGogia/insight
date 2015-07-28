@@ -87,7 +87,17 @@ define([
       if (!selection) { 
         return false; 
       } else {
-        selection.push(object);
+        if (object instanceof Array) {
+          for (var i = 0; i < object.length; i++) {
+            object[i].selectedColor = Defaults[name + "SelectColor"];
+            object[i].selected = true;
+          }
+          selection.concat(object);
+        } else {
+          object.selectedColor = Defaults[name + "SelectColor"];
+          object.selected = true;
+          selection.push(object);
+        }
       }
     },
 

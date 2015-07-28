@@ -7,7 +7,8 @@ define([
 
   var StrokeColorIndex = _.extend({
     metric: "strokeColor",
-    type: "color"
+    type: "color",
+    data: {}
   }, BasicIndex);
 
   return StrokeColorIndex;

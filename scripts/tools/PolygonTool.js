@@ -23,6 +23,7 @@ define([
     onMouseUp: function(event) {
       this._currentPath.style = Defaults.committedStyle;
       Index.insert(this._currentPath);
+      //console.log("hm", Index._indexes["positionXIndex"].data);
       this._currentPath = null;
       console.log("Created polygon! ^^");
     },

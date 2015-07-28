@@ -85,7 +85,6 @@ define([
     },
 
     getPropByString: function(object, propertyString) {
-      console.log("here we are now", propertyString);
       if (!propertyString) { return object; }
       var prop, props = propertyString.split(".");
       for (var i = 0; i < props.length - 1; i++) {
@@ -103,6 +102,7 @@ define([
     distance: function(value1, value2, metricType) {
       switch (metricType) {
         case "numeric":
+          console.log("yoyo", value1, value2);
           return Math.abs(value1 - value2);
         case "point":
           return value1.getDistance(value2);
