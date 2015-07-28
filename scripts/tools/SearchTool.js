@@ -197,14 +197,22 @@ define([
           tool.request("SelectionManager", "addToSelection", ["search", this]);
           tool._clearSelectors();
           tool._addBySelectors(this);
+          if (tool._stateManager.basis) {
+            tool._stateManager[tool._stateManager.basis].name = "selected";
+          }
           tool._stateManager[this.identifier] = {name: "basis", selectors: []};
+          tool._stateManager.basis = this.identifier;
         } else if (state.name === "tentative") {
           var narrowGroup = tool._getCommonTentative(this.identifier);
           for (var i = 0; i < narrowGroup.length; i++) {
             tool._stateManager[narrowGroup[i]].name = "selected";
           }
+          if (tool._stateManager.basis) {
+            tool._stateManager[tool._stateManager.basis].name = "selected";
+          }
           // make sure only most recently selected object is basis
           state.name = "basis";
+          tool._stateManager.basis = this.identifier;
           // TODO: get rid of this, should only be 
           // using IDs
           narrowGroup = narrowGroup.map(function(id) {
@@ -233,6 +241,7 @@ define([
           tool._addBySelectors(this);
           state.name = "basis";
         }
+        console.log("state manager", tool._stateManager);
       };
 
       var allObjects = paper.project.activeLayer.children;

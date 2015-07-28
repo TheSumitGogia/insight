@@ -107,6 +107,8 @@ define([
         case "point":
           return value1.getDistance(value2);
         case "color":
+          if (!value1 && !value2) { return 0; } // TODO: equal color constant
+          if (!(value1 && value2)) { return 9000; } // TODO: max color constant (infty)
           var labArr1 = this.convertToLAB(value1);
           var labArr2 = this.convertToLAB(value2);
           return this.distance(labArr1, labArr2, "euclid");
