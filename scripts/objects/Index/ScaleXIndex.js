@@ -5,11 +5,11 @@ define([
   "objects/Index/BasicIndex"
 ], function(paper, _, PaperUtils, BasicIndex) {
 
-  var ScaleXIndex = _.extend({
+  var ScaleXIndex = _.extend({}, BasicIndex, {
     metric: "bounds.width",
     type: "numeric",
     data: {}
-  }, BasicIndex);
+  });
 
   return ScaleXIndex;
 });

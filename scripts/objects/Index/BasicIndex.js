@@ -11,7 +11,6 @@ define([
     ballQuery: function(object, tolerance) {
       var objectID = object.identifier;
       var objectRow = this.data[objectID];
-      console.log("object row", objectRow);
       var ball = [];
       for (var id in objectRow) {
         if (objectRow.hasOwnProperty(id)) {

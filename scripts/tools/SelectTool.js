@@ -17,21 +17,17 @@ define([
     _handles: null,
     _activeHandle: null,
     _bounds: null,
+    _sidebarComponents: ["Styler"],
 
     setup: function() {
       this.request("SelectionManager", "setCurrentSelector", ["marquee"]); 
       var selection = this.request("SelectionManager", "getSelection", ["marquee"]);
+      this.loadSidebarComponents(["Styler"]);
       if (selection) {
         this._bounds = Bounds(selection);
         this._handles = Handles(this._bounds);
         this._createHandleListeners();
       } 
-
-      var allObjects = paper.project.activeLayer.children;
-      allObjects[0].prototype.onMouseEnter = function(event) {
-        console.log("hot");
-      };
-      allObjects[0].onMouseEnter = allObjects[0].prototype.onMouseEnter; 
     },
 
     cleanup: function() {

@@ -42,6 +42,5 @@ define([
     var iobarHTML = template({iotools: ioToolNames});
     iobar.innerHTML = iobarHTML;
     
-
   };
 });

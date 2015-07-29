@@ -63,6 +63,7 @@ define([
 
       // TODO: ideally should be synchronized with button activation
       this.tools["polygon"].activate();
+      this.tools["polygon"].setup();
       var canvas = $("#draw-canvas");
       canvas.mousewheel(this.tools["polygon"].onMouseWheel.bind(this.tools["polygon"]));
     },

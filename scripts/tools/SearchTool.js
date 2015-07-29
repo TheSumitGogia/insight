@@ -239,7 +239,11 @@ define([
           //   set tentative state
           tool._clearSelectors();
           tool._addBySelectors(this);
+          if (tool._stateManager.basis) {
+            tool._stateManager[tool._stateManager.basis].name = "selected";
+          }
           state.name = "basis";
+          tool._stateManager.basis = this.identifier;
         }
         console.log("state manager", tool._stateManager);
       };

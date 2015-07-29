@@ -61,6 +61,16 @@ define([
       tolerance: 2 
     },   
 
+    lightPalette: [
+      "#1d6a87",
+      "#15afd8",
+      "#dbe8f1",
+      "#be8bd2",
+      "#f35001",
+      "#feaf17",
+      "#fee71a"
+    ],
+
     representSelectColor: "#ff5050", 
     searchSelectColor: "#ff5050",
     marqueeSelectColor: "#ff5050" 

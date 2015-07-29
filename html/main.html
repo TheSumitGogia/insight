@@ -1,7 +1,19 @@
 <div class="split-pane">
   <!-- contains state info and tool parameters -->
   <div class="split-left">
-    <input type="file" id="importInput">   
+    <input type="file" id="importInput">
+    <div id="style-menu"> 
+      <h2> Style </h2>
+      <label class="colorLabel" id="fillLabel"> Fill </label>
+      <input type="text" id="fill" class="colorBox" value="#0093b8">
+      <label class="colorLabel"> Stroke </label>
+      <input type="text" id="stroke" class="colorBox" value="">
+      <div id="color-window"></div>
+      <label class="paramLabel"> Stroke Width </label>
+      <input id="strokeWidthSlider" class="paramSlider" type="range" value="1" min="0" max="40">
+      <label class="paramLabel"> Opacity </label>
+      <input id="opacitySlider" class="paramSlider" type="range" value="1" min="0" max="1">
+    </div> 
   </div>
 
   <!-- the drawing portion of the UI... -->

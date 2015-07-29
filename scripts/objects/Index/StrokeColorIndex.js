@@ -5,11 +5,11 @@ define([
   "objects/Index/BasicIndex"
 ], function(paper, _, PaperUtils, BasicIndex) {
 
-  var StrokeColorIndex = _.extend({
+  var StrokeColorIndex = _.extend({}, BasicIndex, {
     metric: "strokeColor",
     type: "color",
     data: {}
-  }, BasicIndex);
+  });
 
   return StrokeColorIndex;
 });

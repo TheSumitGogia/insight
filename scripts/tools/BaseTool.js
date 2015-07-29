@@ -2,8 +2,9 @@ define([
   "paper",
   "underscore",
   "config/Defaults",
-  "state_management/ToolManager"
-], function(paper, _, Defaults, ToolManager) {
+  "state_management/ToolManager",
+  "tools/sidebar/Sidebar"
+], function(paper, _, Defaults, ToolManager, Sidebar) {
 
   var BaseTool = {
 
@@ -18,6 +19,19 @@ define([
       cutKey: {key: ["shift", "x"], value: [false, false]},
       copyKey: {key: ["shift", "c"], value: [false, false]},
       pasteKey: {key: ["shift", "v"], value: [false, false]} 
+    },
+    _params: {},
+
+    setParam: function(paramName, paramVal) {
+      this._params[paramName] = paramVal;
+    },
+  
+    setParams: function(data) {
+      for (var param in data) {
+        if (data.hasOwnProperty(param)) {
+          this._params[param] = data[param];
+        }
+      }
     },
 
     // NOTE: buggy, not in use
@@ -169,6 +183,14 @@ define([
 
     setManager: function(manager) {
       this._manager = manager;
+    },
+
+    loadSidebarComponents: function(components) {
+      Sidebar.loadComponents(this, components);
+    },
+
+    clearSidebarComponents: function() {
+      Sidebar.clearComponents();
     },
 
     request: function(manager, method, args) {

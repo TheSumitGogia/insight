@@ -14,6 +14,16 @@ define([
       numSides: 5
     },
 
+    _sidebarComponents: ["Styler"],
+
+    setup: function() {
+      this.loadSidebarComponents(this._sidebarComponents);
+    },
+
+    cleanup: function() {
+      this.clearSidebarComponents();
+    },
+
     onMouseDown: function(event) {
       console.log("Starting polygon creation...");
       this._currentPath = Geometry.Path.RegularPolygon(event.point, this._params.numSides, 1);
