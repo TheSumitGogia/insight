@@ -3,8 +3,9 @@ define([
   "underscore",
   "config/Defaults",
   "tools/BaseCreateTool",
-  "objects/Geometry"
-], function(paper, _, Defaults, BaseCreateTool, Geometry) {
+  "objects/Geometry",
+  "objects/Index/Index"
+], function(paper, _, Defaults, BaseCreateTool, Geometry, Index) {
   
   var StarTool = _.extend({}, BaseCreateTool, {
     _currentPath: null,
@@ -12,10 +13,21 @@ define([
     _params: {
       numPoints: 5,
       inRadius: null,
-      outRadius: null
+      outRadius: null,
+      style: {}
     },
 
+    _sidebarComponents: ["Styler"],
+
     _startPoint: null,
+
+    setup: function() {
+      this.loadSidebarComponents(this._sidebarComponents);
+    },
+
+    cleanup: function() {
+      this.clearSidebarComponents();
+    },
 
     onMouseDown: function(event) {
       if (this._params.inRadius) {
@@ -29,7 +41,9 @@ define([
       console.log("Starting star creation...");
       this._startPoint = event.point;
       this._currentPath = new Geometry.Path.Circle(event.point, 1);
-      this._currentPath.style = Defaults.tentativeStyle;
+      this._currentPath.style = Defaults.committedStyle;
+      this._currentPath.style = this._params.style;
+      this._currentPath.opacity = this._currentPath.opacity / 2;
     },
 
     _outerMouseDown: function(event) {
@@ -40,7 +54,9 @@ define([
         this._params.inRadius, 
         this._params.inRadius + 1
       );
-      this._currentPath.style = Defaults.tentativeStyle;
+      this._currentPath.style = Defaults.committedStyle;
+      this._currentPath.style = this._params.style;
+      this._currentPath.opacity = this._currentPath.opacity / 2;
     },
 
     onMouseUp: function(event) {
@@ -59,6 +75,10 @@ define([
 
     _outerMouseUp: function(event) {
       this._currentPath.style = Defaults.committedStyle;
+      this._currentPath.style = this._params.style;
+      this._currentPath.opacity = 2 * this._currentPath.opacity;
+      Index.insert(this._currentPath);
+      this._currentPath = null;
       this._startPoint = null;
       this._params.inRadius = null;
       console.log("Created star! ^^");
@@ -71,6 +91,7 @@ define([
         this._innerMouseDrag(event);
       }
     },
+    
 
     _innerMouseDrag: function(event) {
       var scaleDelta = this._currentPath.position.getDistance(event.point);
@@ -83,14 +104,17 @@ define([
       var outerRadius = this._currentPath.position.getDistance(event.point);
       var angle = event.point.subtract(this._currentPath.position).angle;
 
+      // TODO: somehow get around creating a new object every single time!! bad!!
       this._currentPath.remove();
-      this._currentPath = new paper.Path.Star(
+      this._currentPath = new Geometry.Path.Star(
         this._startPoint,
         this._params.numPoints,
         this._params.inRadius,
         outerRadius
       );
-      this._currentPath.style = Defaults.tentativeStyle;
+      this._currentPath.style = Defaults.committedStyle;
+      this._currentPath.style = this._params.style;
+      this._currentPath.opacity = this._currentPath.opacity / 2;
       this._currentPath.rotate(angle);
     },
 
