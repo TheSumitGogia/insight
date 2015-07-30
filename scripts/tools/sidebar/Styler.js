@@ -27,6 +27,10 @@ define([
       //   this.render();
       this.show();
       this._tool = tool;
+      this._tool.setParam("style.fillColor", $("#fill").val());
+      this._tool.setParam("style.strokeColor", $("#stroke").val());
+      this._tool.setParam("style.strokeWidth", $("#strokeWidthSlider").val());
+      this._tool.setParam("opacity", $("#opacitySlider").val());
       this.addListeners();
     },
 
