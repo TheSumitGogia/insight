@@ -59,8 +59,19 @@ define([
         target: false,
         palettes: Defaults.lightPalette, 
         change: function(event, ui) {
-          console.log("whatup");
           $("#" + that._currentFocus).val(ui.color.toString());
+          var selection = SelectionManager.getCurrentSelection();
+          var newColor = ui.color.toString();
+          var styleKey = that._currentFocus + "Color";
+          if (selection) {
+            for (var i = 0; i < selection.length; i++) {
+              var style = {};
+              style[styleKey] = newColor;
+              selection[i].style = style;
+            }
+          } else {
+            that._tool.setParam("style." + styleKey, newColor);
+          }
         }
       });
     },
@@ -87,21 +98,21 @@ define([
         that._currentFocus = "stroke";
       });
       // stroke width slider move
-      $("#width-slider").change(function(event) {
+      $("#strokeWidthSlider").change(function(event) {
         var selection = SelectionManager.getCurrentSelection();
-        var newWidth = this.val();
+        var newWidth = $("#strokeWidthSlider").val();
         if (selection) {
           for (var i = 0; i < selection.length; i++) {
             selection[i].style = {strokeWidth: newWidth}; 
           }
         } else {
-          that._tool.setParam("strokeWidth", newWidth);
+          that._tool.setParam("style.strokeWidth", newWidth);
         }  
       });
       // opacity slider move
-      $("#opacity-slider").change(function(event) {
+      $("#opacitySlider").change(function(event) {
         var selection = SelectionManager.getCurrentSelection();
-        var newOpacity = this.val();
+        var newOpacity = $("#opacitySlider").val();
         if (selection) {
           for (var i = 0; i < selection.length; i++) {
             selection[i].opacity = newOpacity;

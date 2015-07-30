@@ -23,7 +23,12 @@ define([
     _params: {},
 
     setParam: function(paramName, paramVal) {
-      this._params[paramName] = paramVal;
+      var dataLoc = this._params;
+      var paramSplit = paramName.split(".");
+      for (var i = 0; i < paramSplit.length - 1; i++) {
+        dataLoc = dataLoc[paramSplit[i]];
+      }
+      dataLoc[paramSplit[paramSplit.length - 1]] = paramVal;
     },
   
     setParams: function(data) {

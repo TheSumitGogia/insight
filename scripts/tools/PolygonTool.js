@@ -11,7 +11,8 @@ define([
     _currentPath: null,
     
     _params: {
-      numSides: 5
+      numSides: 5,
+      style: {}
     },
 
     _sidebarComponents: ["Styler"],
@@ -27,11 +28,15 @@ define([
     onMouseDown: function(event) {
       console.log("Starting polygon creation...");
       this._currentPath = Geometry.Path.RegularPolygon(event.point, this._params.numSides, 1);
-      this._currentPath.style = Defaults.tentativeStyle; 
+      this._currentPath.style = Defaults.committedStyle;
+      this._currentPath.style = this._params.style;
+      this._currentPath.opacity = this._currentPath.opacity / 2; 
     },
 
     onMouseUp: function(event) {
       this._currentPath.style = Defaults.committedStyle;
+      this._currentPath.style = this._params.style;
+      this._currentPath.opacity = 2 * this._currentPath.opacity;
       Index.insert(this._currentPath);
       //console.log("hm", Index._indexes["positionXIndex"].data);
       this._currentPath = null;

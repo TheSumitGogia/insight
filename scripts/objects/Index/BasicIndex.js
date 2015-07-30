@@ -71,7 +71,6 @@ define([
 
     addToUpdate: function(object) {
       // possible slight read-write optimization here...
-      console.log("caught update");
       this._modifiedList[object.identifier] = object;
     },
 
