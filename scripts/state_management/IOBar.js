@@ -30,7 +30,16 @@ define([
         alert("ERROR: Import file was not an SVG!");
         return;
       } 
-      paper.project.importSVG(file);
+      paper.project.importSVG(file, {expandShapes: true});
+      
+
+      var oldLayer = paper.project.activeLayer;
+      oldLayer.unstarted = true;
+      //var newLayer = new paper.Layer();
+      //newLayer.activate();
+      //visit(oldLayer);
+      //oldLayer.remove();
+      //oldLayer = null;
     });
   };
 });

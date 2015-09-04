@@ -3,24 +3,42 @@ define([
   "underscore",
   "config/Defaults",
   "tools/BaseCreateTool",
-  "objects/Geometry"
-], function(paper, _, Defaults, BaseCreateTool, Geometry) {
+  "objects/Geometry",
+  "objects/Index/Index"
+], function(paper, _, Defaults, BaseCreateTool, Geometry, Index) {
   
   var RectangleTool = _.extend({}, BaseCreateTool, {
     _currentPath: null,
-    _params: {},
+    _params: {
+      style: {}
+    },
     
     _startDragPoint: null,
+    _sidebarComponents: ["Styler"],
+
+    setup: function() {
+      this.loadSidebarComponents(this._sidebarComponents);
+    },
+
+    cleanup: function() {
+      this.clearSidebarComponents();
+    },
 
     onMouseDown: function(event) {
       console.log("Starting rectangle creation...");
       this._currentPath = new Geometry.Path.Rectangle(event.point, new paper.Size(1, 1));
-      this._currentPath.style = Defaults.tentativeStyle;
+      this._currentPath.style = Defaults.committedStyle;
+      this._currentPath.style = this._params.style;
+      this._currentPath.opacity /= 2;
       this._startDragPoint = event.point;
     },
     
     onMouseUp: function(event) {
       this._currentPath.style = Defaults.committedStyle;
+      this._currentPath.style = this._params.style;
+      this._currentPath.opacity *= 2;
+      Index.insert(this._currentPath);
+      this._currentPath = null;
       this._startDragPoint = null;
       console.log("Created rectangle! ^^");
     },

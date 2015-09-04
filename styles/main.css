@@ -115,6 +115,62 @@ h2 {
   margin-left: 1em;
 }
 
+/* TODO HMM */
+#opacitySlider {
+  margin-bottom: 0.6em;
+}
+
+/*
+ *  Selectors
+ */
+
+.selector {
+  margin-left: 2em;
+  margin-right: 2em;
+  padding: 0.2em;
+  font-family: "Lato", sans-serif;
+  font-size: 0.8em;
+  color: white;
+  opacity: 0.7;
+}
+
+.selector.active {
+  opacity: 1;
+}
+
+#fillColorSelector {
+  background-color: #f23c06;
+}
+
+#strokeColorSelector {
+  background-color: #f89c12; 
+}
+
+#positionXSelector {
+  background-color: #fef764;
+}
+
+#positionYSelector {
+  background-color: #9cb806;
+}
+
+#scaleXSelector {
+  background-color: #35d3da;
+}
+
+#scaleYSelector {
+  background-color: #01638d;
+}
+
+#strokeWidthSelector {
+  background-color: #610d4b;
+}
+
+#shapeSelector {
+  background-color: #1241ce;
+}
+
+
 /*
  *  TOOLBAR
  */

@@ -1,3 +1,76 @@
+<div class="ui modal">
+  <div class="header">
+    Test Parameters
+  </div>
+  <div class="content">
+    <div class="ui tabular menu">
+      <div class="item" data-tab="preset"> Presets </div>
+      <div class="item" data-tab="custom"> Custom </div>
+    </div>
+    <div class="ui active tab" data-tab="preset">
+      <form class="ui form" action="" id="presetForm">
+      <script id="presetParamsTemplate" type="text/x-handlebars-template">
+        {{#each parameters}}
+        <div class="inline fields">
+        <div class="three wide field">
+          <label> {{this.parameter}} </label>
+        </div>
+        {{#each this.values}}
+        <div class="two wide field">
+          <div class="ui checkbox">
+            <input type="checkbox" name="{{../this.shorthand}}{{this}}"> 
+            <label> {{this}} </label>
+          </div>
+        </div>  
+        {{/each}}
+        </div>
+        {{/each}}
+      </script>
+      </form>  
+    </div>
+    <div class="ui tab" data-tab="custom">
+      <div class="ui attached form" id="customForm">
+        <div class="five wide inline field">
+          <label> Test Size </label>
+          <input type="text" name="test-size"> 
+        </div>
+        <div class="inline fields">
+          <div class="two wide field"> 
+            <label> Cluster 1 </label>
+          </div>
+          <div class="four wide field">
+            <select class="ui dropdown">
+              <option value=""> Property </option>
+              <option value="1"> Shape </option>
+              <option value="2"> Fill </option>
+              <option value="3"> Stroke </option>
+              <option value="4"> Width </option>
+              <option value="5"> Scale </option>
+              <option value="6"> Rotation </option>
+            </select>
+          </div>
+          <div class="four wide field">
+            <label> Ratio </label>
+            <input type="text" name="ratio">
+          </div>
+          <div class="five wide field">
+            <label> Variance </label>
+            <input type="text" name="variance">
+          </div>
+        </div>
+      </div>
+      <div class="ui bottom attached button">
+       Add Cluster 
+      </div>  
+    </div>
+  </div>
+  <div class="actions">
+    <div id="submitButton" class="ui positive submit right labeled button">
+      Start!
+    </div>
+  </div>
+</div>
+
 <div class="split-pane">
   <!-- contains state info and tool parameters -->
   <div class="split-left">
@@ -14,6 +87,23 @@
       <label class="paramLabel"> Opacity </label>
       <input id="opacitySlider" class="paramSlider" type="range" value="1" min="0" max="1">
     </div> 
+    <div id="selector-menu">
+      <h2> Selectors </h2>
+      <!--
+      <script id="selectorMenuTemplate" type="text/x-handlebars-template">
+        {{#each selectors}}
+        <div id="{{this}}Selector" class="selector"> </div>
+        {{/each}}
+      </script> -->
+      <div id="fillColorSelector" class="selector"> fillColor </div>
+      <div id="strokeColorSelector" class="selector"> strokeColor </div>
+      <div id="positionXSelector" class="selector"> x Position </div>
+      <div id="positionYSelector" class="selector"> y Position </div>
+      <div id="scaleXSelector" class="selector"> x Scale </div>
+      <div id="scaleYSelector" class="selector"> y Scale </div>
+      <div id="strokeWidthSelector" class="selector"> strokeWidth </div>
+      <div id="shapeSelector" class="selector"> shape </div>
+    </div>
   </div>
 
   <!-- the drawing portion of the UI... -->

@@ -1,10 +1,11 @@
 define([
+  "paper",
   "handlebars",
   "jquery",
   "config/Defaults",
   "state_management/SelectionManager",
   "iris-color-picker"
-], function(Handlebars, $, Defaults, SelectionManager) {
+], function(paper, Handlebars, $, Defaults, SelectionManager) {
 
   var Styler = {
     _rendered: false,
@@ -73,6 +74,7 @@ define([
               style[styleKey] = newColor;
               selection[i].style = style;
             }
+            paper.view.draw();
           } else {
             that._tool.setParam("style." + styleKey, newColor);
           }
@@ -107,8 +109,9 @@ define([
         var newWidth = $("#strokeWidthSlider").val();
         if (selection) {
           for (var i = 0; i < selection.length; i++) {
-            selection[i].style = {strokeWidth: newWidth}; 
+            selection[i].style = {strokeWidth: newWidth};
           }
+          paper.view.draw();
         } else {
           that._tool.setParam("style.strokeWidth", newWidth);
         }  
@@ -121,6 +124,7 @@ define([
           for (var i = 0; i < selection.length; i++) {
             selection[i].opacity = newOpacity;
           }
+          paper.view.draw();
         } else {
           that._tool.setParam("opacity", newOpacity);
         }

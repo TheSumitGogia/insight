@@ -18,6 +18,10 @@ define([
     _activeHandle: null,
     _bounds: null,
     _sidebarComponents: ["Styler"],
+    _params: {
+      style: {}
+    },
+
 
     setup: function() {
       this.request("SelectionManager", "setCurrentSelector", ["marquee"]); 

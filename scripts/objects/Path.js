@@ -6,7 +6,9 @@ define([
 ], function(paper, _, EventsMixin, Index) {
 
   var PathExtension = {
-  
+    setFeatures: function(features) {
+      this.features = features;
+    }  
   };
 
   var PathPrototype = _.extend({}, paper.Path.prototype, EventsMixin, PathExtension);
@@ -93,13 +95,20 @@ define([
   //PathOverrides();
   
   var Path = function() {
-    var path = Object.create(paper.Path.prototype);
-    paper.Path.apply(path, arguments);
+    var path;
+    if (arguments[0] instanceof paper.Path) {
+      path = arguments[0]; 
+      console.log("io gotjioejw");
+    } else {
+      path = Object.create(paper.Path.prototype);
+      paper.Path.apply(path, arguments);
+    }
 
     PathOverrides(path);
     _.extend(path, EventsMixin, PathExtension);
 
     path.prototype = PathPrototype;
+    path.features = {};
     return path;
   };
 
@@ -115,6 +124,7 @@ define([
         _.extend(path, EventsMixin, PathExtension);
         
         path.prototype = PathPrototype;
+        path.features = {};
         return path;
       };
       return newFactory;
@@ -160,6 +170,6 @@ define([
       return newFactory;
     })(_shapeArray[i]);
   }*/
-  
+ 
   return Path;
 });

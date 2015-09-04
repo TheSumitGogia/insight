@@ -26,13 +26,16 @@ define([
       // not supported with current data structure
     },
 
+    getDistance: function(object1, object2) {
+      return this.data[object1][object2].distance;
+    },
+
     getDistances: function(object) {
       return this.data[object.identifier];
       // TODO: perhaps sort and attach IDs  
     },
 
     insert: function(object) {
-      console.log("inserting", this.metric, this.type);
       var allObjects = paper.project.activeLayer.children;
       var metricName = this.metric;
       var metricType = this.type;
@@ -42,17 +45,42 @@ define([
       }
       for (var i = 0; i < allObjects.length; i++) {
         var itemId = allObjects[i].identifier;
-        var itemProp = PaperUtils.getPropByString(allObjects[i], metricName);
-        var distance = PaperUtils.distance(objectProp, itemProp, metricType);
-        this.data[object.identifier][allObjects[i].identifier] = {
-          id: allObjects[i].identifier,
-          distance: distance
-        }; 
-        this.data[allObjects[i].identifier][object.identifier] = {
-          id: object.identifier, 
-          distance: distance
-        };
+        if (itemId || itemId === 0) {
+          var itemProp = PaperUtils.getPropByString(allObjects[i], metricName);
+          var distance = PaperUtils.distance(objectProp, itemProp, metricType);
+          this.data[object.identifier][allObjects[i].identifier] = {
+            id: allObjects[i].identifier,
+            distance: distance
+          }; 
+          this.data[allObjects[i].identifier][object.identifier] = {
+            id: object.identifier, 
+            distance: distance
+          };
+        }
       }
+    },
+
+    ballQueryByFeatures: function(features, tolerance) {
+      var ball = [];
+      var allObjects = paper.project.activeLayer.children;
+      var metricName = this.metric;
+      var metricType = this.type;
+      var prop = features[metricName];
+      for (var i = 0; i < allObjects.length; i++) {
+        var itemId = allObjects[i].identifier;
+        var itemProp = PaperUtils.getPropByString(allObjects[i], metricName);
+        var distance;
+        if (metricType === "color") {
+          itemProp = PaperUtils.convertToLAB(itemProp);
+          distance = PaperUtils.distance(prop, itemProp, "euclid");
+        } else {
+          distance = PaperUtils.distance(prop, itemProp, "numeric");
+        }
+        if (distance <= tolerance) {
+          ball.push(itemId);   
+        }
+      }
+      return ball;
     },
 
     modify: function(object) {

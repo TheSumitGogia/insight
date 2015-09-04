@@ -27,6 +27,7 @@
     "requirejs": "2.1.14",
     "requirejs-text": "~2.0.12",
     "file-saver.js": "1.20150507.2",
+    "semantic-ui": null,
     "Blob": null
   }
 }

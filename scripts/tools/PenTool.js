@@ -4,8 +4,9 @@ define([
   "config/Defaults",
   "tools/BaseCreateTool",
   "utils/PaperUtils",
-  "objects/Geometry"
-], function(paper, _, Defaults, BaseCreateTool, PaperUtils, Geometry) {
+  "objects/Geometry",
+  "objects/Index/Index"
+], function(paper, _, Defaults, BaseCreateTool, PaperUtils, Geometry, Index) {
   
   var PenTool = _.extend({}, BaseCreateTool, {
   
@@ -17,12 +18,30 @@ define([
     //
     _currentPath: null,
     _workingSegment: null,
+    _params: {
+      style: {}
+    },
 
+    _sidebarComponents: ["Styler"],
+
+    setup: function() {
+      this.loadSidebarComponents(this._sidebarComponents);
+    },
+
+    cleanup: function() {
+      this.clearSidebarComponents();
+    },
+    
     onMouseDown: function(event) {
       if (!this._currentPath) {
         this._currentPath = Geometry.Path([event.point]);
-        this._currentPath.style = Defaults.tentative2DStyle;
-        this._currentPath.style.strokeWidth = 1;
+        this._currentPath.style = Defaults.committed2DStyle;
+        this._currentPath.style = this._params.style;
+        this._currentPath.style = {strokeColor: this._currentPath.style.fillColor, fillColor: null};
+        if (this._currentPath.style.strokeWidth === 0) {
+          this._currentPath.style.strokeWidth = 1;
+        }
+        this._currentPath.opacity /= 2;
         this._workingSegment = this._currentPath.lastSegment;
       } else {
         this._workingSegment.selected = false;
@@ -54,6 +73,13 @@ define([
         this._currentPath.lastSegment.selected = false;
         this._currentPath.selected = false;
         this._currentPath.style = Defaults.committed2DStyle;
+        this._currentPath.style = this._params.style;
+        this._currentPath.style = {strokeColor: this._currentPath.style.fillColor, fillColor: null};
+        if (this._currentPath.style.strokeWidth === 0) {
+          this._currentPath.style.strokeWidth = 1;
+        }
+        this._currentPath.opacity *= 2;
+        Index.insert(this._currentPath);
         this._currentPath = null;
         this._workingSegment = null;
       } 

@@ -2,6 +2,7 @@
 // all the app backend models for function overloading to work properly
 define([
   "paper",
+  "jquery",
   "utils/StringUtils",
   "utils/extensions",
   "templating/helpers",
@@ -14,6 +15,7 @@ define([
   "Manager"
 ], function(
   paper,
+  $,
   StringUtils,
   extensions, 
   helpers, 
