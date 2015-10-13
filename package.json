@@ -1,7 +1,7 @@
 {
   "name": "insight",
   "version": "0.0.1",
-  "description": "vector art model editing tool",
+  "description": "vector art selection generalization tool",
   "main": "scripts/main.js",
   "repository": {
     "type": "git",

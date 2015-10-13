@@ -1,7 +1,7 @@
 define([
 
 ], function() {
-  
+  /*  
   var SelectionIndex = {
 
     _selections: {},          // contains links to full selections
@@ -223,6 +223,7 @@ define([
     node.children = [];
     return node;
   };
-
+  */
+  var SelectionIndex = {}; 
   return SelectionIndex;
 });

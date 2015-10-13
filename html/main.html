@@ -1,129 +1,86 @@
-<div class="ui modal">
-  <div class="header">
-    Test Parameters
+<!-- SIDEBAR -->
+<div id="sidebar" class="ui visible wide left vertical sidebar">
+  <!-- TAB MENU -->
+  <div id="testMenu" class="ui fluid pointing secondary two item menu">
+    <a class="active item" data-tab="create"> Create </a>
+    <a class="item" data-tab="run"> Run </a>
   </div>
-  <div class="content">
-    <div class="ui tabular menu">
-      <div class="item" data-tab="preset"> Presets </div>
-      <div class="item" data-tab="custom"> Custom </div>
-    </div>
-    <div class="ui active tab" data-tab="preset">
-      <form class="ui form" action="" id="presetForm">
-      <script id="presetParamsTemplate" type="text/x-handlebars-template">
-        {{#each parameters}}
-        <div class="inline fields">
-        <div class="three wide field">
-          <label> {{this.parameter}} </label>
+
+  <!-- TAB CONTENT -->
+  <div id="inputContainer" class="ui active tab segment" data-tab="create">
+    <h2 class="ui header"> Images </h2>
+      <!-- SEARCH INPUT HANDLER -->
+      <div class="ui left labeled action input">
+        <div class="ui label"> 
+          Tags
         </div>
-        {{#each this.values}}
-        <div class="two wide field">
-          <div class="ui checkbox">
-            <input type="checkbox" name="{{../this.shorthand}}{{this}}"> 
-            <label> {{this}} </label>
-          </div>
-        </div>  
-        {{/each}}
+        <div class="ui search">
+          <input class="prompt" type="text" placeholder="Name/folder/tags...">
         </div>
-        {{/each}}
-      </script>
-      </form>  
-    </div>
-    <div class="ui tab" data-tab="custom">
-      <div class="ui attached form" id="customForm">
-        <div class="five wide inline field">
-          <label> Test Size </label>
-          <input type="text" name="test-size"> 
+        <div id="browseButton" class="ui teal button">
+          Browse
         </div>
-        <div class="inline fields">
-          <div class="two wide field"> 
-            <label> Cluster 1 </label>
-          </div>
-          <div class="four wide field">
-            <select class="ui dropdown">
-              <option value=""> Property </option>
-              <option value="1"> Shape </option>
-              <option value="2"> Fill </option>
-              <option value="3"> Stroke </option>
-              <option value="4"> Width </option>
-              <option value="5"> Scale </option>
-              <option value="6"> Rotation </option>
-            </select>
-          </div>
-          <div class="four wide field">
-            <label> Ratio </label>
-            <input type="text" name="ratio">
-          </div>
-          <div class="five wide field">
-            <label> Variance </label>
-            <input type="text" name="variance">
-          </div>
+        <div id="searchButton" class="ui teal icon button">
+          <i class="search icon"></i>
         </div>
       </div>
-      <div class="ui bottom attached button">
-       Add Cluster 
-      </div>  
-    </div>
-  </div>
-  <div class="actions">
-    <div id="submitButton" class="ui positive submit right labeled button">
-      Start!
-    </div>
-  </div>
-</div>
 
-<div class="split-pane">
-  <!-- contains state info and tool parameters -->
-  <div class="split-left">
-    <input type="file" id="importInput">
-    <div id="style-menu"> 
-      <h2> Style </h2>
-      <label class="colorLabel" id="fillLabel"> Fill </label>
-      <input type="text" id="fill" class="colorBox" value="#0093b8">
-      <label class="colorLabel"> Stroke </label>
-      <input type="text" id="stroke" class="colorBox" value="">
-      <div id="color-window"></div>
-      <label class="paramLabel"> Stroke Width </label>
-      <input id="strokeWidthSlider" class="paramSlider" type="range" value="0" min="0" max="40">
-      <label class="paramLabel"> Opacity </label>
-      <input id="opacitySlider" class="paramSlider" type="range" value="1" min="0" max="1">
-    </div> 
-    <div id="selector-menu">
-      <h2> Selectors </h2>
-      <!--
-      <script id="selectorMenuTemplate" type="text/x-handlebars-template">
-        {{#each selectors}}
-        <div id="{{this}}Selector" class="selector"> </div>
-        {{/each}}
-      </script> -->
-      <div id="fillColorSelector" class="selector"> fillColor </div>
-      <div id="strokeColorSelector" class="selector"> strokeColor </div>
-      <div id="positionXSelector" class="selector"> x Position </div>
-      <div id="positionYSelector" class="selector"> y Position </div>
-      <div id="scaleXSelector" class="selector"> x Scale </div>
-      <div id="scaleYSelector" class="selector"> y Scale </div>
-      <div id="strokeWidthSelector" class="selector"> strokeWidth </div>
-      <div id="shapeSelector" class="selector"> shape </div>
+      <!-- FILE LIST -->
+
+      <div id="imageList" class="ui middle aligned celled selection list">
+      </div>
+      <div id="completeSearch" class="ui bottom attached mini teal icon button">
+        <i class="checkmark box icon"></i>
+        Complete
+      </div>
+
+    <h2 class="ui header"> Tasks </h2>
+      <!-- TASK LIST -->
+      <div id="taskList" class="ui middle aligned celled selection list">
+        <div class="item">
+          <div class="right floated content">
+            <i class="close icon"></i>
+          </div>
+          Task 1 
+        </div>
+      </div>
+      <div id="addTask" class="ui bottom attached mini icon button">
+        <i class="add icon"></i>
+        Add Task
+      </div>
+
+    <h2 class="ui header"> Export </h2>
+
+  </div>
+  <div class="ui tab segment" data-tab="run">
+
+  </div>
+</div> 
+
+<div id="drawContainer" class="pusher">
+  <div class="ui right floated icon buttons">
+    <div class="ui teal button">
+      <i class="paint brush icon"></i>
+    </div>
+    <div class="ui teal button">
+      <i class="privacy icon"></i>
+    </div>
+    <div class="ui teal button">
+      <i class="compress icon"></i>
+    </div>
+    <div class="ui teal button">
+      <i class="exchange icon"></i>
     </div>
   </div>
-
-  <!-- the drawing portion of the UI... -->
-  <div id="drawPanel" class="split-right">
-    <!--====TOOLBAR====-->
-    <div id="iobar">
-      <script id="iobarTemplate" type="text/x-handlebars-template">
-        {{#each iotools}}
-        <button name="{{this}}" class="button" id="{{this}}Tool"></div>
-        {{/each}}
-      </script>
+  <div id="browseSidebar" class="ui wide left vertical sidebar">
+    <div class="ui segment">
+      <h3 class="ui center aligned header"> Image Browser </h3>
+      <div class="ui divider"></div>
+      <div class="ui middle aligned list">
+      </div>
     </div>
-    <div id="tool-sep"> </div>
-    <div id="toolbar">
-      <script id="toolbarTemplate" type="text/x-handlebars-template">
-        {{#each tools}}
-        <button name="{{this}}" class="button" id="{{this}}Tool"></div>
-        {{/each}}
-      </script>
-    </div>
-    <canvas id="draw-canvas"></canvas>
+  </div>
+  <div class="pusher">
+    
   </div>
 </div>

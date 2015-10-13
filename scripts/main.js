@@ -1,49 +1,24 @@
 // note that extensions and StringUtils must be loaded before 
 // all the app backend models for function overloading to work properly
 define([
-  "paper",
   "jquery",
-  "utils/StringUtils",
-  "utils/extensions",
-  "templating/helpers",
-  "templating/templating",
-  "templating/noncanvas",
-  "state_management/SelectionManager",
-  "state_management/ToolManager",
-  "state_management/ModelManager",
-  "state_management/PaperManager",
-  "Manager"
+  "underscore",
+  "paper",
+  "frontend/templating/Templater",
+  "frontend/interaction/testing/TestBehaviors",
+  "semantic"
 ], function(
-  paper,
   $,
-  StringUtils,
-  extensions, 
-  helpers, 
-  templating, 
-  noncanvas, 
-  SelectionManager, 
-  ToolManager, 
-  ModelManager,
-  PaperManager, 
-  Manager
+  _,
+  paper,
+  Templater,
+  TestBehaviors
 ) {
   return function() {
-    // create templating tools
-    helpers();
-    // run templating to create l files
-    templating();
-    // initialize all non-canvas UI
-    noncanvas();
-
+    Templater.initialize(); // initialize UI
+    TestBehaviors.initialize(); // behaviors
 
     var drawCanvas = document.getElementById("draw-canvas");
     paper.setup(drawCanvas);
-
-    SelectionManager.setManager(Manager);
-    ToolManager.setManager(Manager);
-    ToolManager.setupTools();
-    ModelManager.setManager(Manager);
-    PaperManager.setManager(Manager);
-    PaperManager.setup();
   };
 });

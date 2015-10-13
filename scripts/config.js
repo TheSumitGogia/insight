@@ -9,7 +9,6 @@ require.config({
     "underscore": "../bower_components/underscore/underscore",
     "FileSaver": "../bower_components/file-saver.js/FileSaver",
     "jquery-mousewheel": "../bower_components/jquery-mousewheel/jquery.mousewheel",
-    "iris-color-picker": "../bower_components/iris-color-picker/dist/iris",
     "semantic": "../bower_components/semantic-ui/dist/semantic.min",
     "html": "../html"
   },
