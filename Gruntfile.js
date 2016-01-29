@@ -22,14 +22,14 @@ module.exports = function(grunt) {
 
     clean: ["./build"],
     copy: {
-      html: { src: "insight.html", dest: "build/insight.html" },
+      html: { src: "dom/insight.html", dest: "build/insight.html" },
       images: { expand: true, cwd: "images", src: "**", dest: "build/images/" },
-      fonts: { expand: true, cwd: "fonts", src: "**", dest: "build/fonts/" },
-      styles: { expand: true, cwd: "styles", src: "**", dest: "build/styles/" }
+      styles: { expand: true, cwd: "styles", src: "**", dest: "build/styles/" },
+      semantic: { expand: true, cwd: "bower_components/semantic-ui/dist", src: ["*.*", "**/*.*"], dest: "build/styles/semantic" }
     },
     
     requirejs: {
-      compile: {
+      build: {
         options: {
           paths: { "requirejs": "../bower_components/requirejs/require" },
           include: ["requirejs", "main"],
@@ -53,9 +53,16 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks("grunt-contrib-copy");
   grunt.loadNpmTasks("grunt-contrib-requirejs");
 
-  grunt.registerTask("lint", ["jshint", "jscs"]);
+  grunt.registerTask("lint", ["jshint"]);
 
-  grunt.registerTask("build", ["lint", "clean", "copy", "requirejs"]);
+  grunt.registerTask("build", [
+    "clean", 
+    "copy:html", 
+    "copy:images", 
+    "copy:styles", 
+    "copy:semantic", 
+    "requirejs:build"
+  ]);
   grunt.registerTask("default", ["build"]);
 
 };

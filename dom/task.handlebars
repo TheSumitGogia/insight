@@ -1,0 +1,13 @@
+<div class="item task" id="task{{testIndex}}-{{taskIndex}}">
+    <div class="right floated content">
+        <i class="close icon"></i>
+    </div>
+    <div class="tasktext" id="tasktext{{testIndex}}-{{taskIndex}}">
+        Task {{taskIndex}}
+    </div>
+    <div class="list stepslist" id="stepslist{{testIndex}}-{{taskIndex}}">
+        {{#each stepsList}}
+        {{> steps testIndex=testIndex taskIndex=taskIndex stepsIndex=@index}}
+        {{/each}}
+    </div>   
+</div>

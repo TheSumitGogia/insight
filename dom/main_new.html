@@ -1,0 +1,104 @@
+<!-- SIDEBAR -->
+<div id="sidebar" class="ui visible wide left vertical sidebar">
+  <!-- TAB MENU -->
+  <div id="testMenu" class="ui fluid pointing secondary two item menu">
+    <a class="active item" data-tab="create"> Create </a>
+    <a class="item" data-tab="run"> Run </a>
+  </div>
+
+  <!-- TAB CONTENT -->
+  <div id="createInputContainer" class="ui active tab segment" data-tab="create">
+    <h2 class="ui header"> Search </h2>
+      <!-- SEARCH INPUT HANDLER -->
+      <div id="searchBar" class="ui left labeled action input">
+        <div class="ui label"> 
+          Tags
+        </div>
+        <div id="searchInput" class="ui search">
+          <input class="prompt" type="text" placeholder="Name/folder/tags...">
+        </div>
+        <div id="searchButton" class="ui teal icon button">
+          <i class="search icon"></i>
+        </div>
+      </div>
+
+    <h2 id="editHeader" class="ui header"> Edit </h2>
+      <!-- TASK LIST -->
+      <div id="addTaskButton" class="ui small left floated labeled icon button">
+        <i class="add icon"></i>
+        Add Task
+      </div>
+      <div id="addStepsButton" class="ui small labeled icon button">
+        <i class="paw icon"></i>
+        Add Steps 
+      </div>
+      <div id="exportButton" class="ui small teal labeled icon button">
+        <i class="external share icon"></i>
+        Export 
+      </div>
+  </div>
+
+  <!-- RUN TAB -->
+  <div id="runInputContainer" class="ui tab segment" data-tab="run">
+    <h2 class="ui header"> Tests </h2>
+      <!-- SEARCH INPUT HANDLER -->
+      <div class="ui left labeled action input">
+        <div class="ui label"> 
+          Tags
+        </div>
+        <div id="runSearch" class="ui search">
+          <input class="prompt" type="text" placeholder="Name/folder/tags...">
+        </div>
+        <div id="runBrowseButton" class="ui teal button">
+          Browse
+        </div>
+        <div id="runSearchButton" class="ui teal icon button">
+          <i class="search icon"></i>
+        </div>
+      </div>
+
+      <!-- FILE LIST -->
+
+      <div id="testList" class="ui middle aligned celled selection list">
+      </div>
+      <div id="runCompleteSearch" class="ui bottom attached mini teal icon button">
+        <i class="checkmark box icon"></i>
+        Complete
+      </div>
+
+    <h2 class="ui header"> Tasks </h2>
+      <!-- TASK LIST -->
+      <div id="runTaskList" class="ui middle aligned celled selection list">
+      </div>
+
+    <h2 class="ui header"> Export </h2>
+      <div id="runExport" class="ui right floated teal icon button">
+        <i class="external share icon"></i>
+        Export
+      </div> 
+
+  </div>
+</div> 
+
+<div id="drawContainer" class="pusher inactive">
+  <div id="toolbar" class="ui right floated icon buttons">
+    <div id="searchTool" class="ui teal button">
+      <i class="search icon"></i>
+    </div>
+    <div id="selectTool" class="ui teal button">
+      <i class="privacy icon"></i>
+    </div>
+  </div>
+  <canvas id="drawCanvas"></canvas>
+  <div id="browseSidebar" class="ui wide left vertical sidebar">
+    <div class="ui segment">
+      <h3 class="ui center aligned header"> Image Browser </h3>
+      <div class="ui divider"></div>
+      <div class="ui middle aligned list">
+      </div>
+    </div>
+  </div>
+  <div class="pusher">
+    
+  </div>
+</div>
