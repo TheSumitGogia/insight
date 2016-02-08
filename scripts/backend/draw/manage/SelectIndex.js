@@ -19,6 +19,14 @@ define([
                 return item.polarity;
             }); 
         }
+        selection.copy = function() {
+            var copy = {};
+            copy.objects = this.objects.slice();
+            if (this.polarities) {
+                copy.polarities = this.polarities.slice();
+            }
+            return copy;
+        }
         return selection; 
     };
 
@@ -26,6 +34,8 @@ define([
     var addStepsIndex = null;
 
     var SelectIndex = {
+        state: null,
+        currentState: null,
         selections: null,
 
         setup: function() {
@@ -74,20 +84,25 @@ define([
                 this.dispatch("clearSelections", this.selections);
                 this.reset();
                 this.selections.push(Selection([], false));
+                this.state = [this.selections.last().copy()];
+                this.currentState = 0;
                 addTaskIndex = newIndices.taskIndex;
             });
 
             this.addListener("addSteps", function(newSteps, prevIndices, newIndices) {
                 // NOTE: need to already be on a task
-                console.log("yohohoho");
                 this.dispatch("clearSelections", this.selections);
                 this.dispatch("drawSelection", this.selections[0], "task", newIndices.taskIndex);
                 this.selections.push(Selection([], true));
+                this.state = [this.selections.last().copy()];
+                this.currentState = 0;
                 addStepsIndex = newIndices.stepsIndex;
             });
 
             this.addListener("contextSwitch", function(type) {
                 if (type == "test") {
+                    this.state = null;
+                    this.currentState = null;
                     if (TestCreator.adding == "Task") {
                         TestCreator.finishTask(this.selections.last().objects);
                     } else {
@@ -99,8 +114,36 @@ define([
 
         reset: function(options) {
             this.selections = [];
+            this.state = null;
+            this.currentState = null;
             addTaskIndex = null;
             addStepsIndex = null;
+        },
+
+        undo: function() {
+            this.dispatch("clearSelection", this.selections.last()); 
+            this.currentState = this.currentState - 1;
+            this.selections.pop();
+            this.selections.push(this.state[this.currentState]);
+            var currSelection = this.selections.last();
+            if (currSelection.polarities) {
+                this.dispatch("drawSelection", currSelection, "steps", addStepsIndex);
+            } else {
+                this.dispatch("drawSelection", currSelection, "task", addTaskIndex);
+            }
+        },
+
+        redo: function() {
+            this.dispatch("clearSelection", this.selections.last());
+            this.currentState = this.currentState + 1;
+            this.selections.pop();
+            this.selections.push(this.state[this.currentState]);
+            var currSelection = this.selections.last();
+            if (currSelection.polarities) {
+                this.dispatch("drawSelection", currSelection, "steps", addStepsIndex);
+            } else {
+                this.dispatch("drawSelection", currSelection, "task", addTaskIndex);
+            }
         },
 
         add: function(objects, polarized) {
@@ -115,18 +158,23 @@ define([
             this.dispatch("clearSelection", this.selections.last());
             this.selections.pop(); 
             this.selections.push(Selection(objects, false)); 
-            this.dispatch("drawSelection", this.selections.last(), "task", addTaskIndex);
+            var currSelection = this.selections.last();
+            this.state.push(currSelection.copy());
+            this.dispatch("drawSelection", currSelection, "task", addTaskIndex);
         },
 
         append: function(object) {
+            this.dispatch("clearSelection", this.selections.last());
             var deepObj = ObjectIndex.getObjectByID(object.id);
             var currSelection = this.selections.last();
             if (currSelection.polarities) {
                 currSelection.objects.push(deepObj);
                 currSelection.polarities.push(object.polarity);
+                this.state.push(currSelection.copy());
                 this.dispatch("drawSelection", currSelection, "steps", addStepsIndex);
             } else {
                 currSelection.objects.push(deepObj);
+                this.state.push(currSelection.copy());
                 this.dispatch("drawSelection", currSelection, "task", addTaskIndex);
             }
         }

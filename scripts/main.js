@@ -1,5 +1,3 @@
-// note that extensions and StringUtils must be loaded before 
-// all the app backend models for function overloading to work properly
 define([
     "paper",
     "underscore",
