@@ -34,7 +34,7 @@ define([
                 selection.objects[i].selectedColor = colors[index];
                 if (type == "steps" && selection.polarities[i] == -1) {
                     var pColor = selection.objects[i].selectedColor;
-                    var sColor = paper.Color(pColor);
+                    var sColor = new paper.Color(pColor);
                     sColor.saturation = Math.floor(pColor.saturation / 2);
                     selection.objects[i].selectedColor = sColor;
                 }
@@ -56,10 +56,12 @@ define([
         }
     };
 
+    var counter = 0;
     var OutlineSelectVis = {
 
         bwidth: 2,
         boundaries: {},
+        ex_boundaries: {},
 
         drawSelections: function(selections, type) {
             for (var i = 0; i < selections.length; i++) {
@@ -68,22 +70,80 @@ define([
         },
         
         drawSelection: function(selection, type, index) {
-            var colors = (type == "task") ? taskColors: stepsColors;
-            for (var i = 0; i < selection.objects.length; i++) {
-                var object = selection.objects[i];
-                var boundary = object.clone(true);
-                boundary.fillColor = null;
-                boundary.scale(object.strokeBounds.width / object.bounds.width);
-                boundary.strokeColor = colors[index];
-                boundary.strokeWidth = this.bwidth;
-                if (type == "steps" && selection.polarities[i] == -1) {
-                    var pColor = boundary.strokeColor;
-                    var sColor = paper.Color(pColor);
-                    sColor.saturation = Math.floor(pColor.saturation / 2);
-                    boundary.strokeColor = sColor;
-                } 
-                this.boundaries[object.identifier] = boundary;
+            if (type == "task") {
+                // NOTE: selection is CompSelection
+                var colors = taskColors;
+                var components = selection.components;
+                for (var i = 0; i < components.length; i++) {
+                    var cobjects = components[i].objects;
+                    console.log('cobjects', cobjects);
+                    for (var j = 0; j < cobjects.length; j++) {
+                        var object = cobjects[j];
+                        var boundary = object.clone(true);
+                        boundary.fillColor = null;
+                        boundary.scale(object.strokeBounds.width / object.bounds.width);
+                        boundary.strokeColor = colors[index];
+                        boundary.strokeWidth = this.bwidth;
+                        this.boundaries[object.identifier] = boundary;
+                    }
+                }
+            } else if (type == "steps") {
+                // NOTE: selection is PolarSelection
+                var colors = stepsColors;
+                for (var i = 0; i < selection.objects.length; i++) {
+                    var object = selection.objects[i];
+                    var boundary = object.clone(true);
+                    boundary.fillColor = null;
+                    boundary.scale(object.strokeBounds.width / object.bounds.width);
+                    boundary.strokeColor = colors[index];
+                    boundary.strokeWidth = this.bwidth;
+                    if (selection.polarities[i] == -1) {
+                        var pColor = boundary.strokeColor;
+                        var sColor = new paper.Color(pColor);
+                        sColor.saturation = Math.floor(pColor.saturation / 2);
+                        boundary.strokeColor = sColor;
+                    } 
+                    this.boundaries[object.identifier] = boundary;
+                }
             }
+        },
+
+        // NOTE: only shows examples for most recent generalized selection
+        drawExamples: function(selection, index) {
+            // get selection, if general
+            var colors = taskColors;
+            var component = selection.components.last();
+            var examples = component.examples;
+            var polarities = component.expoles;
+            console.log('drawing examples', examples.slice());
+            for (var i = 0; i < examples.length; i++) {
+                console.log('example', examples[i]);
+                var ex = examples[i];
+                var polarity = polarities[i];
+                var boundary = ex.clone(true);
+                boundary.fillColor = null;
+                boundary.scale(ex.strokeBounds.width / ex.bounds.width);
+                boundary.strokeColor = colors[index];
+                boundary.strokeWidth = this.bwidth * 2;
+                var pColor = boundary.strokeColor;
+                var sColor = new paper.Color(pColor);
+                //sColor.saturation = Math.floor(pColor.saturation * Math.pow(2, polarity));
+                boundary.strokeColor = (polarity > 0) ? 'blue' : 'red';
+                this.ex_boundaries[ex.identifier] = boundary;
+            } 
+            paper.view.draw();
+        },
+
+        clearExamples: function(selection) {
+            var examples = selection.components.last().examples;
+            for (var i = 0; i < examples.length; i++) {
+                console.log('rm example', examples[i]);
+                var ex = examples[i];
+                var boundary = this.ex_boundaries[ex.identifier];
+                boundary.remove();
+                delete this.ex_boundaries[ex];
+            } 
+            paper.view.draw();
         },
 
         clearSelections: function(selections) {
@@ -95,12 +155,26 @@ define([
         },
 
         clearSelection: function(selection) {
-            for (var i = 0; i < selection.objects.length; i++) {
-                var object = selection.objects[i];
-                var id = object.identifier; 
-                var boundary = this.boundaries[id];
-                boundary.remove();
-                delete this.boundaries[id];
+            // NOTE: deal with CompSelection vs non-Comp Selection
+            if (selection.components) {
+                for (var j = 0; j < selection.components.length; j++) {
+                    var component = selection.components[j];
+                    for (var i = 0; i < component.objects.length; i++) {
+                        var object = component.objects[i];
+                        var id = object.identifier; 
+                        var boundary = this.boundaries[id];
+                        boundary.remove();
+                        delete this.boundaries[id];
+                    }
+                }
+            } else {
+                for (var i = 0; i < selection.objects.length; i++) {
+                    var object = selection.objects[i];
+                    var id = object.identifier; 
+                    var boundary = this.boundaries[id];
+                    boundary.remove();
+                    delete this.boundaries[id];
+                }
             }
             paper.view.draw();
             console.log("boundaries", this.boundaries);
@@ -111,8 +185,10 @@ define([
 
         initialize: function() {
             this.addListener("fit", this.fitToWindow);
+            this.addListener("clearExamples", this.clearExamples);
             this.addListener("clearSelection", this.clearSelection);
             this.addListener("clearSelections", this.clearSelections);
+            this.addListener("drawExamples", this.drawExamples);
             this.addListener("drawSelection", this.drawSelection);
             this.addListener("drawSelections", this.drawSelections);
         },
@@ -209,6 +285,14 @@ define([
             var zoomCorrection = stablePoint.subtract(translation.multiply(beta)).subtract(center);
             paper.view.zoom = newZoom;
             paper.view.center = paper.view.center.add(zoomCorrection);
+        },
+
+        drawExamples: function(selection, index) {
+            OutlineSelectVis.drawExamples(selection, index);
+        },
+
+        clearExamples: function(selection)  {
+            OutlineSelectVis.clearExamples(selection);
         },
 
         drawSelections: function(selections, type) {

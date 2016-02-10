@@ -8,6 +8,7 @@ define([
     "backend/generic/Communicator"
 ], function(paper, _, BaseTool, ObjectIndex, SelectIndex, EventsMixin, Communicator) {
       
+    var exShow = false;
     var SearchTool = {};
     _.extend(SearchTool, BaseTool, {
         
@@ -16,6 +17,7 @@ define([
             BaseTool.setup.call(this);
 
             this.activate();
+            this._addEnvListeners();
             this._addObjectListeners(); 
 
             // TODO: move feature extraction to object index
@@ -29,9 +31,13 @@ define([
 
         cleanup: function() {
             this._removeObjectListeners();
+            this._removeEnvListeners();
             Communicator.post("select", "reset", {});
+            exShow = false;
             BaseTool.cleanup.call(this);
         },
+        
+
 
         _addWorkListeners: function() {
             this.addListener("activate", function(toolName) {
@@ -47,6 +53,14 @@ define([
                     this.active = false;
                 }
             });
+        },
+
+        _addEnvListeners: function() {
+            this.onKeyDown = this._EnvListeners.keyDown;
+        },
+
+        _removeEnvListeners: function() {
+            this.onKeyDown = null;
         },
 
         _addObjectListeners: function() {
@@ -77,6 +91,19 @@ define([
             this._ObjectListeners.handler = this;
         },
 
+        _EnvListeners: {
+            keyDown: function(event) {
+                if (event.key == 't') {
+                    exShow = !exShow;
+                    SelectIndex.toggleExamples(exShow);
+                } else if (event.key == 'u') {
+                    SelectIndex.undo();
+                } else if (event.key == 'i') {
+                    SelectIndex.redo();
+                } 
+            }
+        },
+
         _ObjectListeners: {
            
             mouseDown: function(event) {
@@ -99,7 +126,10 @@ define([
                     var accept = labels[id] > 0 ? true : false;
                     return accept;
                 }); 
-                SelectIndex.update(selected);
+                SelectIndex.update(selected, {
+                    id: item.identifier,
+                    polarity: polarity
+                });
             },
 
             mouseEnter: function(event) {

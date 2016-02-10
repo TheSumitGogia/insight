@@ -39,8 +39,8 @@ import os
 from BaseHTTPServer import HTTPServer, BaseHTTPRequestHandler
 from fuzzywuzzy import process
 
-#IMAGE_DIR = "/home/summit/Documents/Programming/Insight/site/test"
-IMAGE_DIR = "../../../test"
+IMAGE_DIR = "../../../../test"
+#IMAGE_DIR = "../../../test"
 RESULTS_DIR = (IMAGE_DIR + "/" + "results")
 IMAGE_INDEX = (IMAGE_DIR + "/" + "index.txt")
 MEM_INDEX = None

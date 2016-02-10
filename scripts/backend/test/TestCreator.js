@@ -104,27 +104,20 @@ define([
             this.adding = "Steps";
         },
 
-        finishTask: function(taskObjects) {
+        finishTask: function(target) {
             var currentTest = this.tests[this.currTestIndex];
             var currentTask = currentTest.tasks[this.currTaskIndex];
             // NOTE: should be latest, unfinished task
-            currentTask.target = taskObjects;
+            currentTask.target = target;
             this.adding = null; 
         },
 
-        finishSteps: function(stepsObjects, stepsPolarities) {
+        finishSteps: function(steps) {
             var currentTest = this.tests[this.currTestIndex];
             var currentTask = currentTest.tasks[this.currTaskIndex];
             var currentSteps = currentTask.stepsList[this.currStepsIndex];
             // NOTE: should be latest, unfinished steps
-            var objects = [];
-            for (var i = 0; i < stepsObjects.length; i++) {
-                objects.push({
-                    "id": stepsObjects[i],
-                    "polarity": stepsPolarities[i]
-                });
-            }
-            currentSteps.objects = objects; 
+            currentSteps.objects = steps; 
             this.adding = null; 
         }
 
