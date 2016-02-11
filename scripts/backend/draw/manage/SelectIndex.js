@@ -483,6 +483,17 @@ define([
             } else {
                 this.dispatch("clearExamples", currSelection);
             }
+        },
+
+        toggleSelection: function(toggle) {
+            var currSelection = this.selections.last();
+            var allObjects = ObjectIndex.getObjects();
+            var objects = { objects: allObjects };
+            if (toggle) {
+                this.dispatch("drawSelItems", currSelection, objects);
+            } else {
+                this.dispatch("clearSelItems", currSelection, objects);
+            }
         }
     };
     _.extend(SelectIndex, EventsMixin);

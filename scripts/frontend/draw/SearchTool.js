@@ -9,6 +9,7 @@ define([
 ], function(paper, _, BaseTool, ObjectIndex, SelectIndex, EventsMixin, Communicator) {
       
     var exShow = false;
+    var selShow = false;
     var SearchTool = {};
     _.extend(SearchTool, BaseTool, {
         
@@ -34,6 +35,7 @@ define([
             this._removeEnvListeners();
             Communicator.post("select", "reset", {});
             exShow = false;
+            selShow = false;
             BaseTool.cleanup.call(this);
         },
         
@@ -100,7 +102,10 @@ define([
                     SelectIndex.undo();
                 } else if (event.key == 'i') {
                     SelectIndex.redo();
-                } 
+                } else if (event.key == 'y') {
+                    selShow = !selShow;
+                    SelectIndex.toggleSelection(selShow);
+                }
             }
         },
 

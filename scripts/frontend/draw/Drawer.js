@@ -76,7 +76,6 @@ define([
                 var components = selection.components;
                 for (var i = 0; i < components.length; i++) {
                     var cobjects = components[i].objects;
-                    console.log('cobjects', cobjects);
                     for (var j = 0; j < cobjects.length; j++) {
                         var object = cobjects[j];
                         var boundary = object.clone(true);
@@ -108,6 +107,34 @@ define([
             }
         },
 
+        drawSelItems: function(selection, allObjects) {
+            // TODO: not just task but steps
+            var component = selection.components.last();
+            for (var j = 0; j < allObjects.objects.length; j++) {
+                var object = allObjects.objects[j];
+                object.visible = false;
+            }
+            for (var i = 0; i < component.objects.length; i++) {
+                var object = component.objects[i];
+                var boundary = this.boundaries[object.identifier];
+                object.visible = true;
+                boundary.visible = false;
+            }
+        },
+
+        clearSelItems: function(selection, allObjects) {
+            var component = selection.components.last();
+            for (var j = 0; j < allObjects.objects.length; j++) {
+                var object = allObjects.objects[j];
+                object.visible = true;
+            }
+            for (var i = 0; i < component.objects.length; i++) {
+                var object = component.objects[i];
+                var boundary = this.boundaries[object.identifier];
+                boundary.visible = true;
+            }
+        },
+
         // NOTE: only shows examples for most recent generalized selection
         drawExamples: function(selection, index) {
             // get selection, if general
@@ -115,9 +142,7 @@ define([
             var component = selection.components.last();
             var examples = component.examples;
             var polarities = component.expoles;
-            console.log('drawing examples', examples.slice());
             for (var i = 0; i < examples.length; i++) {
-                console.log('example', examples[i]);
                 var ex = examples[i];
                 var polarity = polarities[i];
                 var boundary = ex.clone(true);
@@ -137,7 +162,6 @@ define([
         clearExamples: function(selection) {
             var examples = selection.components.last().examples;
             for (var i = 0; i < examples.length; i++) {
-                console.log('rm example', examples[i]);
                 var ex = examples[i];
                 var boundary = this.ex_boundaries[ex.identifier];
                 boundary.remove();
@@ -177,7 +201,6 @@ define([
                 }
             }
             paper.view.draw();
-            console.log("boundaries", this.boundaries);
         }
     };
 
@@ -186,9 +209,11 @@ define([
         initialize: function() {
             this.addListener("fit", this.fitToWindow);
             this.addListener("clearExamples", this.clearExamples);
+            this.addListener("clearSelItems", this.clearSelItems);
             this.addListener("clearSelection", this.clearSelection);
             this.addListener("clearSelections", this.clearSelections);
             this.addListener("drawExamples", this.drawExamples);
+            this.addListener("drawSelItems", this.drawSelItems);
             this.addListener("drawSelection", this.drawSelection);
             this.addListener("drawSelections", this.drawSelections);
         },
@@ -293,6 +318,14 @@ define([
 
         clearExamples: function(selection)  {
             OutlineSelectVis.clearExamples(selection);
+        },
+        
+        drawSelItems: function(selection, opposite) {
+            OutlineSelectVis.drawSelItems(selection, opposite);
+        },
+
+        clearSelItems: function(selection, opposite) {
+            OutlineSelectVis.clearSelItems(selection, opposite);
         },
 
         drawSelections: function(selections, type) {
