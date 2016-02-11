@@ -20,6 +20,7 @@
     "grunt-contrib-cssmin": "^0.10.0",
     "grunt-contrib-jshint": "^0.10.0",
     "grunt-contrib-requirejs": "^0.4.4",
+    "grunt-contrib-compress": "^0.14.0",
     "grunt-jscs": "^0.7.1",
     "gulp": "^3.9.0"
   }
