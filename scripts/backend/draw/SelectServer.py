@@ -158,12 +158,6 @@ class SelectionHandler(BaseHTTPRequestHandler):
             self.end_headers()
             json.dump({"result": selection}, self.wfile)
             self.wfile.close()
-        elif message == 'commit':
-            return
-            # TODO
-        elif message == 'discard':
-            return
-            # TODO
         elif message == 'reset':
             CLASSIFIER.reset()
             self.__send_headers()
