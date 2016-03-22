@@ -1,0 +1,74 @@
+import urlparse, urllib, json
+import os
+from BaseHTTPServer import HTTPServer, BaseHTTPRequestHandler
+
+IMAGE_DIR = "../../../../test"
+
+def get_all_images():
+    dirlist = os.listdir(IMAGE_DIR)
+    indices = np.random.permutation(np.arange(len(dirlist)))
+    images = [dirlist[i] for i in indices] 
+    images = [image[:-4] for image in images]
+    return images
+
+def ac_images(tagstring):
+    images = get_all_images()
+    images.append('all')
+    images = [image for image in images if image.startswith(tagstring)]
+    images = sorted(images)
+    return images
+
+def search(tagstring):
+    images = get_all_images()
+    if tagstring == 'all':
+        return images
+    elif tagstring in images:
+        return [tagstring]
+
+def ac_convert_to_semantic(results):
+    semantic_results = [{"title": results[i]} for i in range(len(results))]
+    return semantic_results
+
+def read_image(name):
+    fullpath = IMAGE_DIR + "/" + name + ".svg"
+    with open(fullpath, 'r') as  img_file:
+        svg_string = img_file.read()
+    return svg_string
+
+class ImageHandler(BaseHTTPRequestHandler):
+
+    def do_OPTIONS(self):
+        self.__send_headers()
+
+    def do_GET(self):
+        # get JSON request from URL, read message type
+        get_data = urllib.unquote(urlparse.urlparse(self.path).query)
+        data = json.loads(get_data)
+        message = data['message']
+
+        # send headers for cross-origin, json response type
+        self.__send_headers()
+        self.wfile.write("\n")
+
+        # process request
+        if message == "tag":
+            ac_tags = ac_images(data['tagstring'])
+            ac_tags = ac_convert_to_semantic(ac_tags)
+            json.dump({"results": ac_tags}, self.wfile)
+        elif message == "search":
+            search_results = search(data['tagstring'])
+            json.dump({"result": search_results}, self.wfile)
+        elif message == "image":
+            image = read_image(data['name'])
+            json.dump({"result": image}, self.wfile)
+
+    def __send_headers(self):
+        self.send_response(200, "ok")
+        self.send_header('Access-Control-Allow-Credentials', 'true')
+        self.send_header('Access-Control-Allow-Origin', '*')
+        self.send_header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
+        self.send_header('Access-Control-Allow-Headers', """X-Requested-With,
+                Content-type, Content-length""")
+
+if __name__ == '__main__':
+    HTTPD = HTTPServer(('localhost', 8080), ImageHandler).serve_forever()
