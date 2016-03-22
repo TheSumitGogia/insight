@@ -2,8 +2,8 @@ define([
   "frontend/Graphics",
   "frontend/Navigator",
   "frontend/Toolset",
-  "backend/ObjectIndex",
-  "backend/SelectIndex",
+  "backend/draw/manage/ObjectIndex",
+  "backend/draw/manage/SelectIndex",
   "utils/utils",
   "semantic"
 ], function(
@@ -11,7 +11,7 @@ define([
   Toolset,
   Graphics,
   ObjectIndex,
-  SelectIndex,
+  SelectIndex
 ) {
   var main = function() {
     // start front end

@@ -1,7 +1,7 @@
 define([
   "paper",
   "underscore",
-  "backend/SelectIndex",
+  "backend/draw/manage/SelectIndex",
   "frontend/Graphics"
 ], function(
   paper, 
