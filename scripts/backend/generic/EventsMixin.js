@@ -1,27 +1,27 @@
 define([
   "backend/generic/EventIndex"
 ], function(EventIndex) {
-  
-    var EventsMixin = {
-        dispatch: function(op) {
-            var args = [this];
-            args.push.apply(args, Array.prototype.slice.call(arguments));
-            EventIndex.dispatch.apply(EventIndex, args);
-        },
 
-        removeListener: function(op) {
-            EventIndex.removeListener(this, op);
-        },
+  var EventsMixin = {
+    dispatch: function(op) {
+      var args = [this];
+      args.push.apply(args, Array.prototype.slice.call(arguments));
+      EventIndex.dispatch.apply(EventIndex, args);
+    },
 
-        removeListeners: function() {
-            EventIndex.removeListener(this);
-        },
+    removeListener: function(op) {
+      EventIndex.removeListener(this, op);
+    },
 
-        addListener: function(op, callback) {
-            EventIndex.addListener(this, op, callback);
-        }
+    removeListeners: function() {
+      EventIndex.removeListener(this);
+    },
 
-    };
+    addListener: function(op, callback) {
+      EventIndex.addListener(this, op, callback);
+    }
+
+  };
 
   return EventsMixin;
 });

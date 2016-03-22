@@ -141,9 +141,8 @@ class SelectionHandler(BaseHTTPRequestHandler):
             named_features = data['features']
             features, rev_index = EXTRACTOR.extract(named_features)
             CLASSIFIER.set_data(features, rev_index)
-
         elif message == 'update':
-            CLASSIFIER.update(data['id'], data['polarity'])
+            CLASSIFIER.update(data['object'], data['polarity'])
             selection = CLASSIFIER.status()
             print "current labels: {0}".format(selection)
             self.__send_headers()

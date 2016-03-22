@@ -1,26 +1,44 @@
-.ui.search .prompt {
-    border-radius: 0px;
+#drawContainer {
+    // take up entire screen
+    height:100vh;
+    width:100vw;
+}
+
+#noncanvas {
+    height: 60px;
+    width:100vw;
+}
+
+#searchBar {
+    left: 50px;
+    top: 20px;  
+}
+
+#searchInput {
     width: 100%;
 }
 
-#imageList {
-    max-height: 16%;
-    overflow-y: scroll;
+#searchInput .prompt {
+    width: 100%;
+    border-radius: 0px;
 }
 
-#testList {
-    max-height: 16%;
-    overflow-y: scroll;
+#toolbar {
+    position: absolute;
+    right: 20px;
+    top: 20px;
 }
 
-#createTaskList {
-    max-height: 16%;
-    overflow-y: scroll;
+.toolButton.active {
+    background-color: #00938C;
 }
 
-#runTaskList {
-    max-height: 16%;
-    overflow-y: scroll;
+#drawCanvas {
+}
+
+/*
+.ui.search .prompt {
+    border-radius: 0px;
 }
 
 .teal.button.active {
@@ -36,18 +54,6 @@
     width: 34px;
 }
 
-#searchBar {
-    width: 100%;
-}
-
-#searchInput {
-    width: 100%;
-}
-
-#completeButton {
-    margin-left: 20px; 
-}
-
 #drawCanvas {
     position: absolute;
     top: 34px;
@@ -56,33 +62,4 @@
 #drawContainer {
     height: 100%;
 }
-
-#drawContainer.inactive {
-    pointer-events: none; 
-}
-
-.ui .list.tasklist {
-    padding-left: 20px;
-    padding-top: 6px;
-    display: none;
-}
-
-.ui .list.stepslist {
-    padding-left: 20px;
-    padding-top: 6px;
-    display: none;
-}
-
-.testtext {
-    padding-bottom: 5px;
-    border-bottom: 1px solid black;
-}
-
-.tasktext {
-    padding-bottom: 5px;
-}
-
-.stepstest {
-    padding-bottom: 5px;
-}
-
+*/
