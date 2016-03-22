@@ -3,13 +3,15 @@ define([
   "paper",
   "backend/draw/manage/ObjectIndex",
   "backend/draw/manage/SelectIndex",
-  "backend/generic/Communicator"
+  "backend/generic/Communicator",
+  "backend/generic/EventsMixin"
 ], function(
   $,
   paper,
   ObjectIndex,
   SelectIndex,
-  Communicator
+  Communicator,
+  EventsMixin
 ) {
 
   var getObjects = function() {
@@ -214,6 +216,8 @@ define([
       });
     }
   };
+
+  _.extend(Graphics, EventsMixin);
 
   return Graphics;
 });

@@ -42,18 +42,44 @@ define([
   };
 
   var ObjectListeners = {
-      mouseDown: function(event) {},
-      mouseUp: function(event) {},
-      click: function(event) {
-        var example = {
-          object: event.target.identifier,
-          polarity: event.modifiers.shift ? -1 : 1
-        };
-        var selected = Communicator.post("select", "update", example); 
-        SelectIndex.update(selected, example);
-      },
-      mouseEnter: function(event) {},
-      mouseLeave: function(event) {}
+    mouseDown: function(event) {},
+    mouseUp: function(event) {},
+    click: function(event) {
+      var example = {
+        object: event.target.identifier,
+        polarity: event.modifiers.shift ? -1 : 1
+      };
+      var selected = Communicator.post("select", "add_example", example); 
+      SelectIndex.update(selected, example);
+    },
+    mouseEnter: function(event) {},
+    mouseLeave: function(event) {}
+  };
+
+  var envListeners = ["keyDown"];
+  var addEnvListeners = function(tool) {
+    _.each(envListeners, function(lname) {
+      tool["on" + lname.capitalize()] = EnvListeners[lname].bind(tool);
+    });
+  };
+
+  var removeEnvListeners = function(tool) {
+    _.each(envListeners, function(lname) {
+      tool["on" + lname.capitalize()] = null;
+    });
+  };
+
+  var EnvListeners = {
+    keyDown: function(event) {
+      BaseTool.onKeyDown.call(this);
+      if (event.key == 'u') {
+        Communicator.post("select", "pop_example", {});
+      } else if (event.key == 'i') {
+        var selection = SelectIndex.get();
+        var lastEx = selection.examples[-1];
+        Communicator.post("select", "add_example", lastEx);
+      }
+    }
   };
 
   var SearchToolProto = {
@@ -67,7 +93,7 @@ define([
 
       // TODO: move feature extraction to object index
       var features = ObjectIndex.getFeatures();
-      Communicator.post("select", "full", {"features": features});
+      Communicator.post("select", "data", {"features": features});
     },
 
     finish: function() {

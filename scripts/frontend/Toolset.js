@@ -15,8 +15,10 @@ define([
 
   // map of tool names to buttons and tool objects
   var tools = {
-    search: { button: $("#searchButton"), tool: SearchTool },
+    search: { button: $("#searchButton"), tool: SearchTool }
+    /*
     select: { button: $("#selectButton"), tool: SelectTool }
+    */
   };
 
   // initialize each of the paper tools
