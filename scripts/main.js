@@ -16,7 +16,7 @@ define([
   var main = function() {
     // start front end
     Graphics.start();
-    Searchbar.start();
+    Navigator.start();
     Toolset.start();
 
     // start back end
