@@ -5,13 +5,15 @@
 }
 
 #noncanvas {
-    height: 60px;
+    height: 70px;
     width:100vw;
+    border-bottom: 2px solid #ccc;
 }
 
 #searchBar {
     left: 50px;
     top: 20px;  
+    width: 300px;
 }
 
 #searchInput {
@@ -34,32 +36,5 @@
 }
 
 #drawCanvas {
-}
 
-/*
-.ui.search .prompt {
-    border-radius: 0px;
 }
-
-.teal.button.active {
-    background-color: #00938C;
-}
-
-#toolbar {
-    height: 34px;
-}
-
-#toolbar .button {
-    height: 34px;
-    width: 34px;
-}
-
-#drawCanvas {
-    position: absolute;
-    top: 34px;
-}
-
-#drawContainer {
-    height: 100%;
-}
-*/
