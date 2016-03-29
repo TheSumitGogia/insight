@@ -13,6 +13,8 @@ define([
   var searchEl = $("#searchInput");
   var searchButton = $("#searchButton");
   var searchPrompt = $("#searchInput .prompt");
+  var prevButton = $("#prevButton");
+  var nextButton = $("#nextButton");
 
   var autocomplete = function() {
     searchEl.search({
@@ -23,8 +25,16 @@ define([
   };
 
   var search = function(tagstring) {
-    var found = Communicator.get("test", "images", {"tagstring": tagstring});
+    var found = Communicator.get("test", "search", {"tagstring": tagstring});
     return found;
+  };
+
+  var previous = function() {
+
+  };
+
+  var next = function() {
+
   };
 
   var images = null;
@@ -36,11 +46,12 @@ define([
     },
 
     search: function() {
-      bar = this;
+      var bar = this;
       searchButton.click(function(event) {
         var tagstring = searchPrompt.val();
         images = search(tagstring);
         currentIndex = 0;
+        searchPrompt.val("");
         bar.dispatch("load", images[0]);
       });
     },
@@ -48,6 +59,10 @@ define([
     start: function() {
       this.autocomplete();
       this.search();
+  
+      var bar = this;
+      prevButton.click(bar.previous.bind(bar));
+      nextButton.click(bar.next.bind(bar));
     },
 
     previous: function() {

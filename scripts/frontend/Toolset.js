@@ -15,10 +15,8 @@ define([
 
   // map of tool names to buttons and tool objects
   var tools = {
-    search: { button: $("#searchButton"), tool: SearchTool }
-    /*
-    select: { button: $("#selectButton"), tool: SelectTool }
-    */
+    search: { button: $("#searchTool"), tool: SearchTool },
+    select: { button: $("#selectTool"), tool: SelectTool }
   };
 
   // initialize each of the paper tools
@@ -30,15 +28,15 @@ define([
 
   // get tool name from button id
   var trimID = function(buttonID) {
-    return buttonID.substring(0, buttonID.length - 6);
+    return buttonID.substring(0, buttonID.length - 4);
   };
 
   var Toolset = {
 
     current: null,
     start: function() {
+      console.log("Starting toolbar");
       var bar = this;
-      bar.current = defaultTool; 
 
       // create tools
       createTools();
@@ -53,30 +51,36 @@ define([
       });
 
       // listeners for outside ui
-      this.addListener("load", function() {
-        bar.reset(); 
+      this.addListener("loadGraphics", function(image) {
+        tools["search"].tool.image = image; 
+        bar.reset(true);
       });
 
-      this.addListener("reset", function() {
-        bar.reset();
-      });
+      bar.current = defaultTool; 
+      tools["search"].tool.start();
+      this.dispatch("toolSwitch", "search");
     },
 
-    reset: function() {
+    reset: function(noload) {
+      console.log("Resetting toolbar");
       var bar = this;
       _.each(tools, function(tool, toolName) {
         bar.deactivate(toolName);
-        bar.activate(defaultTool);
       });
+      bar.activate(defaultTool, noload);
       bar.current = defaultTool;
+      this.dispatch("toolSwitch", "search");
     },
 
-    activate: function(toolName) {
+    activate: function(toolName, noload) {
+      console.log("Activating tool:", toolName);
       tools[toolName].button.addClass("active");
-      tools[toolName].tool.start();
+      tools[toolName].tool.start(noload);
+      this.dispatch("toolSwitch", toolName);
     },
 
     deactivate: function(toolName) {
+      console.log("Deactivating tool:", toolName);
       tools[toolName].button.removeClass("active");
       tools[toolName].tool.finish();
     }
