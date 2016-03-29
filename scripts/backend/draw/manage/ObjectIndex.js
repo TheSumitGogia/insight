@@ -20,6 +20,15 @@ define([
       load: function(paperObjects) {
         _.each(paperObjects, function(object) { Geometry.convert(object); }); 
         objects = paperObjects;
+        objects = _.filter(objects, function(object) {
+          return (typeof object != 'undefined' && 
+                  typeof object.features != 'undefined' && 
+                  object.features["shape"] != null);
+        });
+        for (var i = 0; i < objects.length; i++) {
+          var object = objects[i];
+        }
+        _.each(objects, function(object, i) { object.identifier = i; });
       },
 
       getObjects: function() {
@@ -30,6 +39,7 @@ define([
         var reps = _.map(objects, function(object) {
           return object.features;
         });
+        return reps;
       },
 
       getObjectByID: function(id) {

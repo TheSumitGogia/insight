@@ -1,109 +1,171 @@
 define([
   "paper",
   "underscore",
+  "frontend/tools/BaseTool",
   "backend/draw/manage/ObjectIndex",
   "backend/draw/manage/SelectIndex",
-  "frontend/tools/BaseTool",
-  "backend/generic/EventsMixin"
-], function(paper, _, ObjectIndex, SelectIndex, BaseTool, EventsMixin) {
+  "backend/generic/EventsMixin",
+  "frontend/Graphics" // HACK
+], function(
+  paper, 
+  _, 
+  BaseTool,
+  ObjectIndex, 
+  SelectIndex, 
+  EventsMixin, 
+  Graphics
+) {
 
-  var SelectTool = _.extend({}, BaseTool, {
+  // NOTE: pretty shitty for this to be here
+  var searchPrompt = $("#searchInput .prompt");
 
-    active: false,
-    setup: function() {
-      BaseTool.setup.call(this);
-      this._setupManagement();
+  var listeners = ["mouseDown", "mouseUp", "mouseEnter", "mouseLeave", "click"];
+  var marquee = null;
+  var dragging = false;
+  
+  var addObjectListeners = function() {
+    var allObjects = ObjectIndex.getObjects();
+    _.each(allObjects, function(object) {
+      _.each(ObjectListeners, function(listener, listenerName) {
+        object["on" + listenerName.capitalize()] = ObjectListeners[listenerName];
+      });
+    });
+  };
 
-      this.activate();
-      this._addObjectListeners();
+  var removeObjectListeners = function() {
+    var allObjects = ObjectIndex.getObjects();
+    _.each(allObjects, function(object) {
+      _.each(ObjectListeners, function(listener, listenerName) {
+        object["on" + listenerName.capitalize()] = null;
+      });
+    });
+  };
+
+  var ObjectListeners = {
+    mouseDown: function(event) {},
+    mouseUp: function(event) {},
+    click: function(event) {
+      console.log("captured select click", event);
+      if (!dragging) {
+        var add = event.modifiers.shift ? 1 : -1;
+        if (add > 0) {
+          var currentObjects = SelectIndex.get().objects;
+          currentObjects.push(event.target.identifier);
+          SelectIndex.update(currentObjects, 1);
+        } else {
+          SelectIndex.update([event.target.identifier], 1);
+        }
+      }
+    },
+    mouseEnter: function(event) {},
+    mouseLeave: function(event) {}
+  };
+
+  var envListeners = ["keyDown", "mouseDrag", "mouseUp"];
+  var addEnvListeners = function(tool) {
+    _.each(envListeners, function(lname) {
+      tool["on" + lname.capitalize()] = EnvListeners[lname].bind(tool);
+    });
+  };
+
+  var removeEnvListeners = function(tool) {
+    _.each(envListeners, function(lname) {
+      tool["on" + lname.capitalize()] = null;
+    });
+  };
+
+  var drawTestCircle = function(point) {
+    var hm = new paper.Path.Circle(point, 50, 50);
+    hm.fillColor = 'red';
+  };
+
+  var EnvListeners = {
+    keyDown: function(event) {
+      BaseTool.onKeyDown.call(this, event);
+      if (!searchPrompt.is(":focus")) {
+        if (event.key == 'control') { event.preventDefult(); }
+        if (event.key == 'z' && event.modifiers.control) {
+          console.log("captured undo");
+          SelectIndex.undo();
+        } else if (event.key == 'r' && event.modifiers.control) {
+          console.log("captured redo");
+          SelectIndex.redo();
+        }
+      }
     },
 
-    cleanup: function() {
-      this._removeObjectListeners();
+    mouseDrag: function(event) {
+      console.log("event", event);
+      if (marquee != null) {
+        marquee.remove();
+        marquee = null;
+      }
+      dragging = true;
+      var downPoint = Graphics.convertPoint(event.downPoint);
+      var point = Graphics.convertPoint(event.point);
+      marquee = new paper.Path.Rectangle(downPoint, point);
+      marquee.fillColor = null;
+      marquee.strokeColor = "#F00";
+      marquee.strokeWidth = 1;
+    },
+
+    mouseUp: function(event) {
+      if (marquee) {
+        dragging = false;
+        var objects = ObjectIndex.getObjects();
+        var topLeft = marquee.bounds.topLeft;
+        var bottomRight = marquee.bounds.bottomRight;
+        var marked = _.filter(objects, function(object) {
+          var containedTL = (object.bounds.topLeft.x >= topLeft.x) && (object.bounds.topLeft.y >= topLeft.y);
+          var containedBR = (object.bounds.bottomRight.x <= bottomRight.x) && (object.bounds.bottomRight.y <= bottomRight.y);
+          return (containedTL && containedBR);
+        }); 
+        marked = _.map(marked, function(item) {
+          return item.identifier;
+        });
+
+        marquee.remove();
+        marquee = null;
+        var add = event.modifiers.shift ? 1 : -1;
+        if (add > 0) {
+          var currentObjects = SelectIndex.get().objects;
+          currentObjects.push.apply(currentObjects, marked);
+          SelectIndex.update(currentObjects, 1);
+        } else {
+          SelectIndex.update(marked, 1);
+        }
+      }
+    }
+  };
+
+  var SelectToolProto = {
+
+    start: function() {
+      BaseTool.setup.call(this);
+
+      this.activate();
+      addEnvListeners(this);
+      addObjectListeners();
+    },
+
+    finish: function() {
+      removeEnvListeners(this);
+      removeObjectListeners();
+      marquee = null;
       BaseTool.cleanup.call(this);
     },
 
-    _addWorkListeners: function() {
-      this.addListener("activate", function(toolName) {
-        if (toolName == "select" && !this.active) {
-          this.setup();
-          this.active = true;
-        }
-      });
+  };
 
-      this.addListener("deactivate", function(toolName) {
-        if (toolName == "select" && this.active) {
-          this.cleanup();
-          this.active = false;
-        }
-      });
-    },
+  SelectToolProto = _.extend({}, BaseTool, SelectToolProto, EventsMixin);
 
-    _addObjectListeners: function() {
-      var allObjects = ObjectIndex.getObjects();
-      for (var i = 0; i < allObjects.length; i++) {
-        var object = allObjects[i];
-        object.onMouseDown = this._ObjectListeners.mouseDown;
-        object.onMouseUp = this._ObjectListeners.mouseUp;
-        object.onClick = this._ObjectListeners.click;
-        object.onMouseEnter = this._ObjectListeners.mouseEnter;
-        object.onMouseLeave = this._ObjectListeners.mouseLeave;
-      }
-    },
-
-    _removeObjectListeners: function() {
-      var allObjects = ObjectIndex.getObjects();
-      for (var i = 0; i < allObjects.length; i++) {
-        var object = allObjects[i];
-        object.onMouseDown = null; 
-        object.onMouseUp = null; 
-        object.onClick = null; 
-        object.onMouseEnter = null; 
-        object.onMouseLeave = null; 
-      }
-    },
-
-    _ObjectListeners: {
-
-      mouseDown: function(event) {
-
-      },
-
-      mouseUp: function(event) {
-
-      },
-
-      click: function(event) {
-        var item = event.target;
-        var polarity = event.modifiers.shift ? -1 : 1;
-        var update = {
-          id: item.identifier,
-          polarity: polarity
-        };
-        SelectIndex.append(update);
-      },
-
-      mouseEnter: function(event) {
-
-      },
-
-      mouseLeave: function(event) {
-
-      }
-    }
-  }, EventsMixin);
-
-  var SelectToolBuilder = {
-    initialize: function() {
-      this.addListener("setupTools", function() {
-        var selector = new paper.Tool();
-        _.extend(selector, SelectTool);
-        selector._addWorkListeners();
-      });
+  var SelectTool = {
+    create: function() {
+      var selector = new paper.Tool();
+      _.extend(selector, SelectToolProto);
+      return selector;
     }
   };
-  _.extend(SelectToolBuilder, EventsMixin);
-  SelectToolBuilder.initialize();
 
   return SelectTool;
 });

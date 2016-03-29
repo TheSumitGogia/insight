@@ -1,15 +1,17 @@
 define([
   "frontend/Graphics",
   "frontend/Navigator",
+  "frontend/Modeset",
   "frontend/Toolset",
   "backend/draw/manage/ObjectIndex",
   "backend/draw/manage/SelectIndex",
   "utils/utils",
   "semantic"
 ], function(
+  Graphics,
   Navigator,
   Toolset,
-  Graphics,
+  Modeset,
   ObjectIndex,
   SelectIndex
 ) {
@@ -17,11 +19,13 @@ define([
     // start front end
     Graphics.start();
     Navigator.start();
-    Toolset.start();
 
     // start back end
     ObjectIndex.create();
     SelectIndex.create();
+    
+    Modeset.start();
+    Toolset.start();
   };
 
   return main;

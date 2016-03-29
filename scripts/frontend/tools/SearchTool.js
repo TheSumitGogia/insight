@@ -1,7 +1,6 @@
 define([
   "paper",
   "underscore",
-  "frontend/Graphics",
   "frontend/tools/BaseTool",
   "backend/draw/manage/ObjectIndex",
   "backend/draw/manage/SelectIndex",
@@ -10,7 +9,6 @@ define([
 ], function(
   paper, 
   _, 
-  Graphics,
   BaseTool, 
   ObjectIndex, 
   SelectIndex, 
@@ -18,8 +16,8 @@ define([
   Communicator
 ) {
 
-  var exShow = false;
-  var selShow = true;
+  // NOTE: pretty shitty for this to be here
+  var searchPrompt = $("#searchInput .prompt");
 
   var listeners = ["mouseDown", "mouseUp", "mouseEnter", "mouseLeave", "click"];
 
@@ -50,6 +48,9 @@ define([
         polarity: event.modifiers.shift ? -1 : 1
       };
       var selected = Communicator.post("select", "add_example", example); 
+      for (var i = 0; i < selected.length; i++) {
+        var object = selected[i];
+      }
       SelectIndex.update(selected, example);
     },
     mouseEnter: function(event) {},
@@ -71,36 +72,41 @@ define([
 
   var EnvListeners = {
     keyDown: function(event) {
-      BaseTool.onKeyDown.call(this);
-      if (event.key == 'u') {
-        Communicator.post("select", "pop_example", {});
-      } else if (event.key == 'i') {
-        var selection = SelectIndex.get();
-        var lastEx = selection.examples[-1];
-        Communicator.post("select", "add_example", lastEx);
+      BaseTool.onKeyDown.call(this, event);
+      if (!searchPrompt.is(":focus")) {
+        if (event.key == 'control') { event.preventDefault(); }
+        if (event.key == 'z' && event.modifiers.control) {
+          console.log("captured undo");
+          SelectIndex.undo();
+          Communicator.post("select", "pop_example", {});
+        } else if (event.key == 'r' && event.modifiers.control) {
+          console.log("captured redo");
+          SelectIndex.redo();
+          var selection = SelectIndex.get();
+          var lastEx = selection.examples.last();
+          Communicator.post("select", "add_example", lastEx);
+        }
       }
     }
   };
 
   var SearchToolProto = {
 
-    start: function() {
+    start: function(noload) {
       BaseTool.setup.call(this);
 
       this.activate();
       addEnvListeners(this);
       addObjectListeners(); 
 
-      // TODO: move feature extraction to object index
       var features = ObjectIndex.getFeatures();
-      Communicator.post("select", "data", {"features": features});
+      Communicator.post("select", "data", {"features": features, "image": this.image});
     },
 
     finish: function() {
       removeEnvListeners(this);
       removeObjectListeners();
       Communicator.post("select", "reset", {});
-      exShow = false; selShow = true;
       BaseTool.cleanup.call(this);
     },
 
@@ -112,6 +118,7 @@ define([
     create: function() {
       var selector = new paper.Tool();
       _.extend(selector, SearchToolProto);
+      return selector;
     }
   };
 

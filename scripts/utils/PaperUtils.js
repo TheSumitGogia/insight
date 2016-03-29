@@ -8,9 +8,13 @@ define([
         // need to test
         getCentroidDists: function(item, numPoints) {
             var pointSample = [];
-            for (var i = 0; i < numPoints; i++) {
-                var point = item.getPointAt(i / numPoints * item.length);
-                pointSample.push(point);
+            try {
+              for (var i = 0; i < numPoints; i++) {
+                  var point = item.getPointAt(i / numPoints * item.length);
+                  pointSample.push(point);
+              }
+            } catch (err) {
+              return null;
             }
             var centroid = pointSample.reduce(function(p1, p2) { return p1.add(p2); });
             centroid = centroid.divide(numPoints);
@@ -22,8 +26,21 @@ define([
             return centroidDistances;
         },
 
+        avgColor: function(colors) {
+          var ncolors = _.map(colors, function(stop) {
+            return stop.color;
+          });
+          var colorSum = _.reduce(ncolors, function(a, b) { 
+            return a.add(b); 
+          });
+          return colorSum.divide(colors.length);
+        },
+
         convertToLAB: function(color) {
-            if (!color || color.type === "gradient") { return false; }
+            if (!color) { return false; }
+            if (color.type === "gradient") {
+              color = this.avgColor(color.stops);
+            }
 
             var linearizeRGBChannel = function(value) {
                 if (value > 0.04045) {
