@@ -25,6 +25,58 @@
     border-radius: 0px;
 }
 
+#navigate {
+    position: absolute;
+    left: 375px;
+    top: 20px;
+}
+
+#modeText {
+    font-size: 1.6em;
+    position: absolute;
+    right: 685px;
+    top: 27px;
+}
+
+#modebar {
+    position: absolute;
+    right: 500px;
+    top: 21px;
+}
+
+#modebar .button {
+    background-image: url("../images/icons-update.svg");
+    background-size: 80%;
+    height: 32px;
+    width: 32px;
+}
+
+#noneMode {
+    background-position: 45% 2%; 
+    border-right: 1px solid white;
+}
+
+#removeMode {
+    background-position: 45% 33%;
+    border-right: 1px solid white;
+}
+
+#unionMode {
+    background-position: 45% 66%;
+    border-right: 1px solid white;
+}
+
+#intersectMode {
+    background-position: 45% 98%;
+}
+
+#toolText {
+    font-size: 1.6em;
+    position: absolute;
+    right: 110px;
+    top: 27px;
+}
+
 #toolbar {
     position: absolute;
     right: 20px;
