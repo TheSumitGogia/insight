@@ -1,5 +1,6 @@
 import urlparse, urllib, json
 import os
+import numpy as np
 from BaseHTTPServer import HTTPServer, BaseHTTPRequestHandler
 
 IMAGE_DIR = "../../../../test"
@@ -52,13 +53,21 @@ class ImageHandler(BaseHTTPRequestHandler):
 
         # process request
         if message == "tag":
+            print "**TAG REQUEST**"
+            print "Request:", data
             ac_tags = ac_images(data['tagstring'])
             ac_tags = ac_convert_to_semantic(ac_tags)
+            print "Response:", ac_tags
             json.dump({"results": ac_tags}, self.wfile)
         elif message == "search":
+            print "**SEARCH REQUEST**"
+            print "Request:", data
             search_results = search(data['tagstring'])
+            print "Response:", search_results
             json.dump({"result": search_results}, self.wfile)
         elif message == "image":
+            print "**IMAGE REQUEST**"
+            print "Request:", data
             image = read_image(data['name'])
             json.dump({"result": image}, self.wfile)
 
