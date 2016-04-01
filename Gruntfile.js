@@ -35,6 +35,7 @@ module.exports = function(grunt) {
       semantic: { expand: true, cwd: "bower_components/semantic-ui/dist", src: ["*.*", "**/*.*"], dest: "build/styles/semantic" },
       expBuild: { expand: true, cwd: "build", src: "**", dest: "../export/build" },
       expTest: { expand: true, cwd: "../test", src: "**", dest: "../export/test" },
+      expTrees: { expand: true, cwd: "../trees", src: "**", dest: "../export/trees" },
       expScripts: { expand: true, flatten: true, src: "scripts/**/*.py", dest: "../export/scripts" }
     },
     
@@ -93,6 +94,7 @@ module.exports = function(grunt) {
     "copy:expBuild",
     "copy:expTest",
     "copy:expScripts",
+    "copy:expTrees",
     "compress:export"
   ]);
   grunt.registerTask("default", ["build"]);
