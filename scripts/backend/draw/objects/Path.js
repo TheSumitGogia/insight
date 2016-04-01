@@ -15,6 +15,8 @@ define([
       features["strokeWidth"] = this.strokeWidth; 
       features["position"] = [this.position.x, this.position.y];
       features["scale"] = [this.bounds.width, this.bounds.height];
+      var heh = PaperUtils.getAxes(this, numSamplePoints);
+
 
       // handle no stroke case
       if (!features["strokeColor"]) {
@@ -31,6 +33,8 @@ define([
     _.extend(paperPath, EventsMixin, PathExtension);
     paperPath.prototype = PathPrototype;
     paperPath.features = paperPath.extractFeatures(); 
+    paperPath.originFill = new paper.Color(paperPath.fillColor);
+    paperPath.originStroke = new paper.Color(paperPath.strokeColor);
     return paperPath;
   };
 

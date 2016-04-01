@@ -47,11 +47,19 @@ define([
     click: function(event) {
       console.log("captured select click", event);
       if (!dragging) {
+        /*
         var add = event.modifiers.shift ? 1 : -1;
         if (add > 0) {
           var currentObjects = SelectIndex.get().objects;
           currentObjects.push(event.target.identifier);
           SelectIndex.update(currentObjects, 1);
+        } else {
+          SelectIndex.update([event.target.identifier], 1);
+        }
+        */
+        var shift = event.modifiers.shift ? 1 : -1;
+        if (shift > 0) {
+          SelectIndex.change([event.target.identifier], 1); 
         } else {
           SelectIndex.update([event.target.identifier], 1);
         }
@@ -84,10 +92,10 @@ define([
       BaseTool.onKeyDown.call(this, event);
       if (!searchPrompt.is(":focus")) {
         if (event.key == 'control') { event.preventDefult(); }
-        if (event.key == 'z' && event.modifiers.control) {
+        if (event.key == 'z' && event.modifiers.shift) {
           console.log("captured undo");
           SelectIndex.undo();
-        } else if (event.key == 'r' && event.modifiers.control) {
+        } else if (event.key == 'r' && event.modifiers.shift) {
           console.log("captured redo");
           SelectIndex.redo();
         }
@@ -126,11 +134,19 @@ define([
 
         marquee.remove();
         marquee = null;
+        /*
         var add = event.modifiers.shift ? 1 : -1;
         if (add > 0) {
           var currentObjects = SelectIndex.get().objects;
           currentObjects.push.apply(currentObjects, marked);
           SelectIndex.update(currentObjects, 1);
+        } else {
+          SelectIndex.update(marked, 1);
+        }
+        */
+        var shift = event.modifiers.shift ? 1 : -1;
+        if (shift > 0) {
+          SelectIndex.change(marked, 1);
         } else {
           SelectIndex.update(marked, 1);
         }

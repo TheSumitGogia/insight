@@ -244,14 +244,17 @@ define([
       var diff = _.difference(objects, cObjects);
       var inter = _.intersection(objects, cObjects);
       _.each(objects, function(object) {
+        /*
         object.oldStrokeColor = object.strokeColor;
         object.oldStrokeWidth = object.strokeWidth;
         object.strokeColor = 'red';
         object.strokeWidth = 2;
+        */
+        object.fillColor.lightness = object.originFill.lightness; 
         ui["selectN"][object.identifier] = {};
       });
       _.each(cObjects, function(object) {
-        object.fillColor.lightness -= (1 - object.fillColor.lightness);
+        object.fillColor.lightness = object.originFill.lightness;
         ui["selectC"][object.identifier] = {};
       });
       /*
@@ -288,13 +291,14 @@ define([
     clearSelectionLt: function() {
       _.each(ui["selectC"], function(obj, id) {
         var object = ObjectIndex.getObjectByID(id);
-        object.fillColor.lightness += (1 - object.fillColor.lightness) / 2;
+        object.fillColor.lightness = object.originFill.lightness;
         delete ui["selectC"][id];
       });
       _.each(ui["selectN"], function(obj, id) {
         var object = ObjectIndex.getObjectByID(id);
-        object.strokeColor = object.oldStrokeColor;
-        object.strokeWidth = object.oldStrokeWidth;
+        //object.strokeColor = object.oldStrokeColor;
+        //object.strokeWidth = object.oldStrokeWidth;
+        object.fillColor.lightness = 0.5 + object.originFill.lightness / 2;
         delete ui["selectN"][id];
       });
       paper.view.draw();

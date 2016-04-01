@@ -67,7 +67,7 @@ define([
           this.dispatch("finish", "union");
         } else if (event.key == keys.intersectFinishKey && !event.modifiers.control) {
           this.dispatch("finish", "intersect");
-        } else if ((event.key == 'up' || event.key == 'down' || event.key == 'right' || event.key == 'left') && event.modifiers.control) {
+        } else if ((event.key == 'up' || event.key == 'down' || event.key == 'right' || event.key == 'left') && event.modifiers.shift) {
           console.log("caught pan event");
           Graphics.pan(motionMap[event.key]);
         } else if ((event.key == '=' || event.key == '-')) {

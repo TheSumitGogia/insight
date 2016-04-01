@@ -25,6 +25,7 @@ define([
     return copy;
   };
 
+  var toolSwitch = false;
   var SelectIndex = {
 
     create: function() {
@@ -34,6 +35,8 @@ define([
       var index = this;
       this.addListener("toolSwitch", function(tool) {
         console.log("heard tool switch at sel index");
+        toolSwitch = true;
+        /*
         this.dispatch("clearSelection");
         var selection = clone(states[currentState]);
         // basically make sure that a "finish" hasn't been executed already
@@ -45,8 +48,10 @@ define([
           currentState = 0;
         }
         this.dispatch("drawSelection", selection);
+        */
       });
 
+      /*
       this.addListener("finish", function(update) {
         console.log("heard finish selection at sel index");
         this.dispatch("clearSelection");
@@ -66,6 +71,7 @@ define([
         currentState = 0;
         this.dispatch("drawSelection", selection);
       });
+      */
     },
 
     reset: function(options) {
@@ -102,6 +108,10 @@ define([
       console.log("current selection state", states[currentState]);
       this.dispatch("clearSelection");
       var selection = clone(states[currentState]);
+      if (toolSwitch) { 
+        selection.examples = [];
+        toolSwitch = false;
+      }
       selection.objects = objects;
       selection.examples.push(example);
       this.dispatch("drawSelection", selection);
@@ -115,12 +125,24 @@ define([
       console.log("current selection state", states[currentState]);
       this.dispatch("clearSelection");
       var selection = clone(states[currentState]);
+      if (toolSwitch) { 
+        selection.examples = [];
+        toolSwitch = false;
+      }
+      /*
       if (selection.examples.length > 0) { selection.examples = []; }
       if (polarity == 1) {
         selection.objects.push.apply(selection.objects, objects);
       } else {
         selection.objects = _.difference(selection.objects, objects);
       };
+      */
+      var intersect = _.intersection(selection.objects, objects);
+      if (intersect.length == 0) {
+        selection.objects.push.apply(selection.objects, objects);
+      } else {
+        selection.objects = _.difference(selection.objects, objects);
+      }
       this.dispatch("drawSelection", selection);
       states = states.slice(0, currentState+1);
       states.push(selection);
