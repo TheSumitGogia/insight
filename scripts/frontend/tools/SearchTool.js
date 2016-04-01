@@ -75,11 +75,11 @@ define([
       BaseTool.onKeyDown.call(this, event);
       if (!searchPrompt.is(":focus")) {
         if (event.key == 'control') { event.preventDefault(); }
-        if (event.key == 'z' && event.modifiers.control) {
+        if (event.key == 'z' && event.modifiers.shift) {
           console.log("captured undo");
           SelectIndex.undo();
           Communicator.post("select", "pop_example", {});
-        } else if (event.key == 'r' && event.modifiers.control) {
+        } else if (event.key == 'r' && event.modifiers.shift) {
           console.log("captured redo");
           SelectIndex.redo();
           var selection = SelectIndex.get();
