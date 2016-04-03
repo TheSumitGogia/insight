@@ -4,6 +4,13 @@
     width:100vw;
 }
 
+/* only used for logging */
+#newUserButton {
+    position: absolute;
+    left: 375px;
+    top: 20px;
+}
+
 #noncanvas {
     height: 70px;
     width:100vw;
