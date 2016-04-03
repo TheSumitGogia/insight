@@ -1,11 +1,13 @@
 define([
   "underscore",
   "backend/draw/manage/ObjectIndex",
-  "backend/generic/EventsMixin"
+  "backend/generic/EventsMixin",
+  "backend/generic/Communicator"
 ], function(
   _, 
   ObjectIndex, 
-  EventsMixin
+  EventsMixin,
+  Communicator
 ) {
 
   var states = null;
@@ -25,6 +27,7 @@ define([
     return copy;
   };
 
+  var currTool = "search";
   var toolSwitch = false;
   var SelectIndex = {
 
@@ -36,42 +39,8 @@ define([
       this.addListener("toolSwitch", function(tool) {
         console.log("heard tool switch at sel index");
         toolSwitch = true;
-        /*
-        this.dispatch("clearSelection");
-        var selection = clone(states[currentState]);
-        // basically make sure that a "finish" hasn't been executed already
-        if (states[currentState].objects.length !== 0) {
-          selection.checkpoint = selection.objects.slice(); 
-          selection.objects = [];
-          selection.examples = [];
-          states = [selection];
-          currentState = 0;
-        }
-        this.dispatch("drawSelection", selection);
-        */
+        currTool = tool; 
       });
-
-      /*
-      this.addListener("finish", function(update) {
-        console.log("heard finish selection at sel index");
-        this.dispatch("clearSelection");
-        var selection = clone(states[currentState]);
-        if (update == "none") {
-          selection.checkpoint = selection.objects.slice();
-        } else if (update == "remove") {
-          selection.checkpoint = _.difference(selection.checkpoint, selection.objects);
-        } else if (update == "union") {
-          selection.checkpoint = _.union(selection.objects, selection.checkpoint);
-        } else if (update == "intersect") {
-          selection.checkpoint = _.intersection(selection.objects, selection.checkpoint);
-        }
-        selection.objects = [];
-        selection.examples = [];
-        states = [selection];
-        currentState = 0;
-        this.dispatch("drawSelection", selection);
-      });
-      */
     },
 
     reset: function(options) {
@@ -86,6 +55,12 @@ define([
       currentState = currentState - 1;
       var selection = states[currentState];
       this.dispatch("drawSelection", selection);
+      // LOGGING
+      Communicator.post("image", "log", {
+        "operation": "undo",
+        "objects": selection.objects,
+        "tool": currTool
+      }); 
     },
 
     redo: function() {
@@ -95,6 +70,11 @@ define([
       currentState = currentState + 1;
       var selection = states[currentState];
       this.dispatch("drawSelection", selection);
+      Communicator.post("image", "log", {
+        "operation": "redo",
+        "objects": selection.objects,
+        "tool": currTool
+      }); 
     },
 
     get: function() {
@@ -118,6 +98,12 @@ define([
       states = states.slice(0, currentState+1);
       states.push(selection);
       currentState = currentState + 1;
+      // LOGGING
+      Communicator.post("image", "log", {
+        "operation": "change",
+        "objects": selection.objects,
+        "tool": currTool
+      }); 
     },
 
     change: function(objects, polarity) {
@@ -129,14 +115,6 @@ define([
         selection.examples = [];
         toolSwitch = false;
       }
-      /*
-      if (selection.examples.length > 0) { selection.examples = []; }
-      if (polarity == 1) {
-        selection.objects.push.apply(selection.objects, objects);
-      } else {
-        selection.objects = _.difference(selection.objects, objects);
-      };
-      */
       var intersect = _.intersection(selection.objects, objects);
       if (intersect.length == 0) {
         selection.objects.push.apply(selection.objects, objects);
@@ -147,6 +125,12 @@ define([
       states = states.slice(0, currentState+1);
       states.push(selection);
       currentState = currentState + 1;
+      // LOGGING
+      Communicator.post("image", "log", {
+        "operation": "change",
+        "objects": selection.objects,
+        "tool": currTool
+      }); 
     }
   };
   _.extend(SelectIndex, EventsMixin);
