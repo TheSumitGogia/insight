@@ -2,12 +2,14 @@ define([
   "paper",
   "underscore",
   "backend/draw/manage/SelectIndex",
-  "frontend/Graphics"
+  "frontend/Graphics",
+  "backend/generic/Communicator"
 ], function(
   paper, 
   _, 
   SelectIndex,
-  Graphics
+  Graphics,
+  Communicator
 ) {
 
   // NOTE: pretty shitty for this to be here
@@ -17,14 +19,15 @@ define([
     panKey: 'r',
     zoomKey: 'e',
     toggleExKey: 't',
-    toggleSelKey: 'v',
+    toggleSelKey: 'control',
     noneFinishKey: 'o',
     removeFinishKey: 'p',
     unionFinishKey: 'u',
     intersectFinishKey: 'i'
   };
 
-  var selShow = false;
+  var selShow = true;
+  var toggledSelection = null;
   var exShow = false;
 
   var motionMap = {
@@ -43,30 +46,21 @@ define([
 
     onKeyDown: function(event) {
       if (!searchPrompt.is(":focus")) {
-        if (event.key == 'control') { event.preventDefault(); }
-        if (event.key == keys.toggleExKey) {
-          exShow = !exShow;
-          if (exShow) {
-            Graphics.drawExamples(SelectIndex.get().examples);
-          } else  {
-            Graphics.clearExamples();
-          }
-        } else if (event.key == keys.toggleSelKey) {
+        event.preventDefault(); 
+        if (event.key == keys.toggleSelKey) {
           selShow = !selShow;
           if (selShow) {
-            Graphics.drawSelection(SelectIndex.get());
+            Communicator.post("image", "log", {
+              "operation": "toggleOn"
+            });
+            Graphics.show(SelectIndex.get());
           }
           else {
-            Graphics.clearSelection();
+            Communicator.post("image", "log", {
+              "operation": "toggleOff"
+            });
+            Graphics.hide(SelectIndex.get());
           }
-        } else if (event.key == keys.noneFinishKey && !event.modifiers.control) {
-          this.dispatch("finish", "none");
-        } else if (event.key == keys.removeFinishKey && !event.modifiers.control) {
-          this.dispatch("finish", "remove");
-        } else if (event.key == keys.unionFinishKey && !event.modifiers.control) {
-          this.dispatch("finish", "union");
-        } else if (event.key == keys.intersectFinishKey && !event.modifiers.control) {
-          this.dispatch("finish", "intersect");
         } else if ((event.key == 'up' || event.key == 'down' || event.key == 'right' || event.key == 'left') && event.modifiers.shift) {
           console.log("caught pan event");
           Graphics.pan(motionMap[event.key]);

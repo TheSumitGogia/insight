@@ -74,7 +74,6 @@ define([
     keyDown: function(event) {
       BaseTool.onKeyDown.call(this, event);
       if (!searchPrompt.is(":focus")) {
-        if (event.key == 'control') { event.preventDefault(); }
         if (event.key == 'z' && event.modifiers.shift) {
           console.log("captured undo");
           SelectIndex.undo();
