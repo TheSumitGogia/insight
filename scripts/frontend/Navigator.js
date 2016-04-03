@@ -16,6 +16,9 @@ define([
   var prevButton = $("#prevButton");
   var nextButton = $("#nextButton");
 
+  // LOGGING
+  var newUserButton = $("#newUserButton");
+
   var autocomplete = function() {
     searchEl.search({
       apiSettings: {
@@ -25,7 +28,7 @@ define([
   };
 
   var search = function(tagstring) {
-    var found = Communicator.get("test", "search", {"tagstring": tagstring});
+    var found = Communicator.get("image", "search", {"tagstring": tagstring});
     return found;
   };
 
@@ -63,6 +66,7 @@ define([
       var bar = this;
       prevButton.click(bar.previous.bind(bar));
       nextButton.click(bar.next.bind(bar));
+      newUserButton.click(bar.addUser.bind(bar));
     },
 
     previous: function() {
@@ -75,6 +79,10 @@ define([
       if (currentIndex == images.length-1) { return; }
       currentIndex = currentIndex + 1;
       this.dispatch("load", images[currentIndex]);
+    },
+
+    addUser: function() {
+      Communicator.post("image", "user", {});
     }
   };
 

@@ -5,7 +5,7 @@ define([
 
   var serverURL = "http://127.0.0.1:";
   var serverPortMap = {
-    "test": 8080,
+    "image": 8080,
     "select": 1025 
   };
 

@@ -1,9 +1,30 @@
 import urlparse, urllib, json
+import datetime
 import os
 import numpy as np
 from BaseHTTPServer import HTTPServer, BaseHTTPRequestHandler
 
 IMAGE_DIR = "../../../../test"
+LOGDIR = "../../../../logs"
+LOGFILE = None
+
+def get_current_user():
+    logs = sorted(os.listdir(LOGDIR))
+    if len(logs) > 0:
+        curr_user = int((logs[-1])[4:]) + 1
+    else:
+        curr_user = 0
+    return curr_user
+
+def read_time(time):
+    dt_rep = datetime.datetime.strptime(time, '%Y-%m-%d %H:%M:%S.%f')
+    return dt_rep
+
+def set_logfile(index):
+    global LOGFILE
+    if LOGFILE is not None:
+        LOGFILE.close()
+    LOGFILE = open(LOGDIR + "/user" + str(index), 'a')
 
 def get_all_images():
     dirlist = os.listdir(IMAGE_DIR)
@@ -71,6 +92,31 @@ class ImageHandler(BaseHTTPRequestHandler):
             image = read_image(data['name'])
             json.dump({"result": image}, self.wfile)
 
+    def do_POST(self):
+        length = int(self.headers.get('content-length'))
+        pre_data = self.rfile.read(length)
+        data = json.loads(pre_data)
+        message = data['message']
+
+        if message == "user":
+            print "**NEW USER REQUEST**"
+            user_idx = get_current_user()
+            set_logfile(user_idx)
+        if message == "log":
+            print "**LOG REQUEST**"
+            print "Request:", data
+            for key in data:
+                if key != 'message':
+                    LOGFILE.write(key.upper() + ": " + str(data[key]) + "\n")
+            LOGFILE.write("TIME: " + str(datetime.datetime.now()) + "\n")
+            self.__send_data("success")
+
+    def __send_data(self, data):
+        self.__send_headers()
+        self.end_headers()
+        json.dump({"result": data}, self.wfile)
+        self.wfile.close()
+
     def __send_headers(self):
         self.send_response(200, "ok")
         self.send_header('Access-Control-Allow-Credentials', 'true')
@@ -78,6 +124,10 @@ class ImageHandler(BaseHTTPRequestHandler):
         self.send_header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
         self.send_header('Access-Control-Allow-Headers', """X-Requested-With,
                 Content-type, Content-length""")
+        self.send_header('Content-Type', 'application/json')
 
 if __name__ == '__main__':
-    HTTPD = HTTPServer(('localhost', 8080), ImageHandler).serve_forever()
+    try:
+        HTTPD = HTTPServer(('localhost', 8080), ImageHandler).serve_forever()
+    except:
+        LOGFILE.close()

@@ -162,7 +162,7 @@ define([
     },
 
     load: function(image) {
-      var SVGString = Communicator.get("test", "image", {"name": image});
+      var SVGString = Communicator.get("image", "image", {"name": image});
       paper.project.importSVG(SVGString, {
           expandShapes: true
       });
@@ -181,6 +181,11 @@ define([
       this.redraw();
       this.dispatch("loadGraphics", image);
       this.startSelectionLt();
+      // LOGGING
+      Communicator.post("image", "log", {
+        "operation": "load",
+        "image": image
+      });
       paper.view.draw();
     },
 
@@ -197,21 +202,27 @@ define([
 
     zoom: function(delta, stablePoint) {
       var zoomFactor = (delta > 0) ? 1.05 : 1/1.05; 
-      /*
-      var center = paper.view.center;
-      var newZoom = paper.view.zoom;
-      if (delta < 0) {
-        newZoom = newZoom / zoomFactor; 
-      } else if (delta > 0) {
-        newZoom = newZoom * zoomFactor; 
-      } 
-      var beta = paper.view.zoom / newZoom; 
-      var translation = stablePoint.subtract(center);
-      var zoomCorrection = stablePoint.subtract(translation.multiply(beta)).subtract(center);
-      paper.view.zoom *= newZoom;
-      paper.view.center = paper.view.center.add(zoomCorrection);
-      */
       paper.view.zoom *= zoomFactor;
+      this.redraw();
+    },
+
+    show: function(selection) {
+      var objects = _.map(selection.objects, function(objectID) {
+        return ObjectIndex.getObjectByID(objectID);
+      });
+      _.each(objects, function(object) {
+        object.visible = true;
+      });
+      this.redraw();
+    },
+
+    hide: function(selection) {
+      var objects = _.map(selection.objects, function(objectID) {
+        return ObjectIndex.getObjectByID(objectID);
+      });
+      _.each(objects, function(object) {
+        object.visible = false;
+      });
       this.redraw();
     },
 
