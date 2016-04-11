@@ -102,6 +102,7 @@ class ImageHandler(BaseHTTPRequestHandler):
             print "**NEW USER REQUEST**"
             user_idx = get_current_user()
             set_logfile(user_idx)
+            self.__send_data("success")
         if message == "log":
             print "**LOG REQUEST**"
             print "Request:", data
