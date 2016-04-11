@@ -32,8 +32,7 @@ testing = False
 saving = False
 
 def export_trees(image, features):
-    trees = {prop: structs.ClusterTree(features[prop]) for prop in features.keys()}
-    export_dir = "../../../../trees"
+    trees = {prop: structs.NClusterTree(features[prop]) for prop in features.keys()}
     exp_file = open(tree_dir + "/" + image + tree_ext, "w")
     pickle.dump(trees, exp_file) 
     exp_file.close()
@@ -84,7 +83,7 @@ class SelectionHandler(BaseHTTPRequestHandler):
             named_features = data['features']
             if len(named_features) != 0:
                 out_image = data['image']
-                features = processor.process(named_features)
+                features = processor.process(named_features, group=['fillColor', 'shape', 'strokeColor'])
                 export_trees(out_image, features)
             self.__send_data("success")
         elif message  == 'reset':

@@ -1,7 +1,8 @@
 import numpy as np
 from sklearn import preprocessing
+from structs import ClusterTree, NClusterTree
 
-class NPProcessor():
+class NPProcessor:
     # TODO: change to all static
     def process(self, objects, strip=[]):
         all_features = map(lambda x: self.process_single(x, strip), objects)
@@ -40,22 +41,40 @@ class NPProcessor():
         processed = np.array(features)
         return processed
 
-class DictProcessor():
+class DictProcessor:
     # TODO: change to all static
-    def process(self, objects, strip=[]):
+    def process(self, objects, strip=[], group=[]):
         all_features = map(self.process_single, objects)
         new_features = {}
         for feature in all_features[0].keys():
             arr = np.array([obj[feature] for obj in all_features])
-            new_features[feature] = arr 
+            new_features[feature] = arr.reshape(arr.shape[0], 1)
         self.__strip_features(new_features, strip)
+        self.__group_features(new_features, group)
         return new_features
+
+    def __group_features(self, features, names):
+        if len(names) == 0:
+            return
+        nameset = set(names)
+        groups = {}
+        keys = features.keys()
+        for feature in keys:
+            prop = feature.split('_')[0]
+            if prop in nameset:
+                if prop not in groups:
+                    groups[prop] = features[feature].copy()
+                else:
+                    groups[prop] = np.hstack((groups[prop], features[feature]))
+                del features[feature] 
+        features.update(groups)
 
     def __strip_features(self, features, names):
         if len(names) == 0:
             return
         nameset = set(names)
-        for feature in features:
+        keys = features.keys()
+        for feature in keys:
             if feature.split('_')[0] in nameset:
                 del features[feature]
 
@@ -67,8 +86,6 @@ class DictProcessor():
         all_features = []
         for name in sorted(object_rep.keys()):
             feature_val = object_rep[name]
-            if name == 'fillColor' and feature_val == False:
-                print 'here we are yo', object_rep
             if name == 'shape':
                 proc_features = self.__process_shape(feature_val) 
             elif name == 'strokeWidth':
@@ -89,3 +106,32 @@ class DictProcessor():
     def __process_stroke_width(self, stroke_width_features):
         return [stroke_width_features]
 
+class TreeCreator:
+    # TODO: change to all static
+    def process(self, features):
+        trees = {} 
+        for feature in features:
+            data = features[feature]
+            trees[feature] = NClusterTree(data)
+        return trees
+
+class TreeBinarizer:
+    # TODO: change all to static
+    numlevels = 4 
+    def process(self, trees):
+        feature_mat = self.__create_mat(trees)
+        feature_idx = 0
+        for feature in trees:
+            tree = trees[feature]
+            top_clusts = tree.get_top(self.numlevels)
+            top_ch = map(lambda c: list(tree.get_children(c)), top_clusts)
+            for idx in range(len(top_ch)):
+                children = top_ch[idx]
+                feature_mat[children, feature_idx+idx] = 1
+            feature_idx += (2**numlevels - 1)
+        return feature_mat
+
+    def __create_mat(self, trees):
+        num_data = trees[trees.keys()[0]].get_data().shape[0]
+        num_features = len(features) * (2**self.num_levels - 1)
+        return np.zeros((num_data, num_features))

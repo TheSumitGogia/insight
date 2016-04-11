@@ -1,9 +1,62 @@
 import numpy as np
 import numpy.random as rnd
 from sklearn import svm
+from sklearn.linear_model import SGDClassifier
 from sklearn.cluster import KMeans
 from structs import ClusterTree
 from collections import defaultdict
+
+class LRClassifier():
+    nex_w_factor = 1
+
+    def __init__(self, data):
+        self.__data = data
+        self.__weights = np.ones((data.shape[0], 1)) * (1.0 / data.shape[0]) * self.nex_w_factor
+        self.__labels = np.ones((data.shape[0], 1)) * -1
+        self.__examples = []
+        self.__selection = []
+        self.__clf = SGDClassifier(loss='log')
+
+    def add_example(self, object_id):
+        self.__examples.append(object_id)
+        self.__reselect()
+
+    def __reselect(self):
+        if len(self.__examples) == 0:
+            self.__weights = np.ones((data.shape[0], 1)) * (1.0 / data.shape[0]) * self.nex_w_factor
+            self.__labels = np.ones((data.shape[0], 1)) * -1
+            self.__selection = []
+            return
+
+        # go through examples, count
+        # weights for each example = count
+        # labels for each example = 1
+        counts = defaultdict(int) 
+        for obj in examples:
+            counts[obj] += 1
+        for obj in counts:
+            self.__weights[obj, 1] = counts[obj]
+            self.__labels[obj, 1] = 1
+        self.__clf.fit(self.__data, self.__labels, sample_weight=self.__weights) 
+        labels = self.__clf.predict(self.__data)
+        self.__selection = np.where(labels==1)[0].tolist() 
+
+    def pop_example(self):
+        self.__examples.pop()
+        self.__reselect()
+
+    def get_selection(self):
+        return self.__selection[:]
+
+    def get_examples(self):
+        return self.__examples[:]
+
+    def reset(self):
+        self.__weights = np.ones((data.shape[0], 1)) * (1.0 / data.shape[0]) * self.nex_w_factor
+        self.__labels = np.ones((data.shape[0], 1)) * -1
+        self.__selection = []
+        self.__examples = []
+        self.__clf = SGDClassifier(loss='log')
 
 class SVMClassifier():
 
@@ -67,6 +120,7 @@ class PClassifier:
         
         self.__weights = [-1.0, 1.0, 0.667]
         self.__constant, self.__constantCount = False, 0
+        self.__oldconstant, self.__oldconscount = False, 0
         self.__score = None
 
     '''
@@ -104,6 +158,13 @@ class PClassifier:
 
     def pop_example(self):
         self.__examples.pop()
+        self.__constant = self.__oldconstant
+        self.__constantCount = self.__oldconscount
+        if len(self.__examples) == 0:
+            self.__selection = set()
+            self.__clusters = None
+            self.__score = None
+            return
         self.__recluster()
         self.__reselect()
 
@@ -119,6 +180,8 @@ class PClassifier:
     def __recluster(self):
         tree = self.__tree
         nclusters, scores = self.__climb(tree)
+        self.__oldconscount = self.__constantCount
+        self.__oldconstant = self.__constant
         if (self.__clusters is not None and set(nclusters) == set(self.__clusters)):
             self.__constantCount += 1
             if self.__constantCount >= self.constantLength:
@@ -156,7 +219,7 @@ class PClassifier:
         self.__augment_counts(tree, examples)
         # remove duplicate clusters and sort
         clusters = list(set(clusters))
-        clusters.sort(key=lambda cluster: cluster.data[0])
+        # clusters.sort(key=lambda cluster: cluster.data[0])
         for cluster in clusters:
             cluster.ccount = cluster.ecount
 
@@ -263,6 +326,9 @@ class SelPClassifier:
         self.__reselect()
 
     def __reselect(self):
+        if len(self.__examples) == 0:
+            self.__selection = set()
+            return
         self.__selection = set(range(self.__count))
         scores = self.get_scores()
         print 'Select Classifier scores:', scores
@@ -282,14 +348,6 @@ class SelPClassifier:
         for prop in props:
             clf = self.__prop_clfs[prop]
             self.__selection.intersection_update(set(clf.get_selection()))
-
-        '''
-        for prop in self.__prop_clfs:
-            clf = self.__prop_clfs[prop]
-            if clf.get_score() >= self.__threshold:
-                clf_sel = set(clf.get_selection())
-                self.__selection.intersection_update(clf_sel)
-        '''
 
     def get_selection(self):
         return sorted(list(self.__selection))
