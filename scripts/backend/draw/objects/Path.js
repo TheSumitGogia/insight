@@ -14,8 +14,13 @@ define([
       features["fillColor"] = PaperUtils.convertToLAB(this.fillColor);
       features["strokeWidth"] = this.strokeWidth; 
       features["position"] = [this.position.x, this.position.y];
-      features["scale"] = [this.bounds.width, this.bounds.height];
-      var heh = PaperUtils.getAxes(this, numSamplePoints);
+      var axes = PaperUtils.getAxes(this, numSamplePoints);
+      if (axes == null) { 
+        features["scale"] = [null, null];
+      } else {
+        features["scale"] = [axes[0].length, axes[1].length];
+      }
+      //features["scale"] = [this.bounds.width, this.bounds.height];
 
 
       // handle no stroke case

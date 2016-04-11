@@ -23,7 +23,10 @@ define([
         objects = _.filter(objects, function(object) {
           return (typeof object != 'undefined' && 
                   typeof object.features != 'undefined' && 
-                  object.features["shape"] != null);
+                  object.features["shape"] != null &&
+                  object.features["scale"][0] != null &&
+                  !isNaN(object.features["scale"][0]) &&
+                  !isNaN(object.features["scale"][1]));
         });
         for (var i = 0; i < objects.length; i++) {
           var object = objects[i];

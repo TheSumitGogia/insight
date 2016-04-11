@@ -65,14 +65,15 @@ define([
             var eig2 = (piece1 - piece2);
             var evec1 = [sums[2], eig1 - sums[0]];
             var emag1 = Math.sqrt(evec1[0]*evec1[0] + evec1[1]*evec1[1]);
+            if (emag1 == 0) {
+              console.log("evec1", evec1);
+            }
             evec1 = [evec1[0]/emag1, evec1[1]/emag1];
             var evec2 = [eig2 - sums[1], sums[2]];
             var emag2 = Math.sqrt(evec2[0]*evec2[0] + evec2[1]*evec2[1]);
             evec2 = [evec2[0]/emag2, evec2[1]/emag2];
             var mag1 = Math.sqrt(eig1);
             var mag2 = Math.sqrt(eig2);
-            if (eig1 < 0) { mag1 *= -1; }
-            if (eig2 < 0) { mag2 *= -1; }
             evec1 = (new paper.Point(evec1)).multiply(mag1);
             evec2 = (new paper.Point(evec2)).multiply(mag2);
 
