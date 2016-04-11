@@ -5,26 +5,10 @@ import numpy as np
 from BaseHTTPServer import HTTPServer, BaseHTTPRequestHandler
 
 IMAGE_DIR = "../../../../test"
-LOGDIR = "../../../../logs"
-LOGFILE = None
-
-def get_current_user():
-    logs = sorted(os.listdir(LOGDIR))
-    if len(logs) > 0:
-        curr_user = int((logs[-1])[4:]) + 1
-    else:
-        curr_user = 0
-    return curr_user
 
 def read_time(time):
     dt_rep = datetime.datetime.strptime(time, '%Y-%m-%d %H:%M:%S.%f')
     return dt_rep
-
-def set_logfile(index):
-    global LOGFILE
-    if LOGFILE is not None:
-        LOGFILE.close()
-    LOGFILE = open(LOGDIR + "/user" + str(index), 'a')
 
 def get_all_images():
     dirlist = os.listdir(IMAGE_DIR)
@@ -101,15 +85,6 @@ class ImageHandler(BaseHTTPRequestHandler):
         if message == "user":
             print "**NEW USER REQUEST**"
             user_idx = get_current_user()
-            set_logfile(user_idx)
-            self.__send_data("success")
-        if message == "log":
-            print "**LOG REQUEST**"
-            print "Request:", data
-            for key in data:
-                if key != 'message':
-                    LOGFILE.write(key.upper() + ": " + str(data[key]) + "\n")
-            LOGFILE.write("TIME: " + str(datetime.datetime.now()) + "\n")
             self.__send_data("success")
 
     def __send_data(self, data):
@@ -128,7 +103,4 @@ class ImageHandler(BaseHTTPRequestHandler):
         self.send_header('Content-Type', 'application/json')
 
 if __name__ == '__main__':
-    try:
-        HTTPD = HTTPServer(('localhost', 8080), ImageHandler).serve_forever()
-    except:
-        LOGFILE.close()
+    HTTPD = HTTPServer(('localhost', 8080), ImageHandler).serve_forever()

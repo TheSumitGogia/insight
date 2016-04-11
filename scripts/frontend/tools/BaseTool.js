@@ -50,15 +50,9 @@ define([
         if (event.key == keys.toggleSelKey) {
           selShow = !selShow;
           if (selShow) {
-            Communicator.post("image", "log", {
-              "operation": "toggleOn"
-            });
             Graphics.show(SelectIndex.get());
           }
           else {
-            Communicator.post("image", "log", {
-              "operation": "toggleOff"
-            });
             Graphics.hide(SelectIndex.get());
           }
         } else if ((event.key == 'up' || event.key == 'down' || event.key == 'right' || event.key == 'left') && event.modifiers.shift) {

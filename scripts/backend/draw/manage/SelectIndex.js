@@ -55,12 +55,6 @@ define([
       currentState = currentState - 1;
       var selection = states[currentState];
       this.dispatch("drawSelection", selection);
-      // LOGGING
-      Communicator.post("image", "log", {
-        "operation": "undo",
-        "objects": selection.objects,
-        "tool": currTool
-      }); 
     },
 
     redo: function() {
@@ -70,11 +64,6 @@ define([
       currentState = currentState + 1;
       var selection = states[currentState];
       this.dispatch("drawSelection", selection);
-      Communicator.post("image", "log", {
-        "operation": "redo",
-        "objects": selection.objects,
-        "tool": currTool
-      }); 
     },
 
     get: function() {
@@ -98,12 +87,6 @@ define([
       states = states.slice(0, currentState+1);
       states.push(selection);
       currentState = currentState + 1;
-      // LOGGING
-      Communicator.post("image", "log", {
-        "operation": "change",
-        "objects": selection.objects,
-        "tool": currTool
-      }); 
     },
 
     change: function(objects, polarity) {
@@ -125,12 +108,6 @@ define([
       states = states.slice(0, currentState+1);
       states.push(selection);
       currentState = currentState + 1;
-      // LOGGING
-      Communicator.post("image", "log", {
-        "operation": "change",
-        "objects": selection.objects,
-        "tool": currTool
-      }); 
     }
   };
   _.extend(SelectIndex, EventsMixin);

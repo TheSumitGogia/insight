@@ -180,11 +180,6 @@ define([
       this.redraw();
       this.dispatch("loadGraphics", image);
       this.startSelectionLt();
-      // LOGGING
-      Communicator.post("image", "log", {
-        "operation": "load",
-        "image": image
-      });
       paper.view.draw();
     },
 
