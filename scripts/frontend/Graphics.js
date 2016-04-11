@@ -119,6 +119,9 @@ define([
   var boundaryWidth = 2;
   var ui = {"select": {}, "selectC": {}, "selectN": {}, "example": {}};
 
+  var pan = {x: 0, y: 0};
+  var zoom = 1;
+
   var Graphics = {
     start: function() {
       var drawCanvas = $("#drawCanvas")[0];
@@ -163,20 +166,16 @@ define([
 
     load: function(image) {
       var SVGString = Communicator.get("image", "image", {"name": image});
+      this.pan({x: -pan.x, y: -pan.y});
+      pan = {x: 0, y: 0};
+      paper.view.zoom *= 1.0 / zoom;
+      zoom = 1;
       paper.project.importSVG(SVGString, {
           expandShapes: true
       });
       var paperObjects = getObjects();
       paperItems = paperObjects.slice();
       fit(paperObjects);
-      // NOTE: Hack for fitting odd data visualization test image
-      if (image == "data") {
-        for (var l = 0; l < paper.project.layers.length; l++) {
-          var layer = paper.project.layers[l];
-          layer.translate(-425, -450);
-          this.trans = [this.trans[0] - 425, this.trans[1] - 450];
-        }
-      }
       ObjectIndex.load(paperObjects);
       this.redraw();
       this.dispatch("loadGraphics", image);
@@ -195,6 +194,8 @@ define([
         x: delta.x * paper.view.bounds.width / 100,
         y: delta.y * paper.view.bounds.height / 100 
       };
+      pan.x += delta.x;
+      pan.y += delta.y;
 
       paper.view.center = paper.view.center.add(new paper.Point(delta));
       this.redraw();
@@ -203,6 +204,7 @@ define([
     zoom: function(delta, stablePoint) {
       var zoomFactor = (delta > 0) ? 1.05 : 1/1.05; 
       paper.view.zoom *= zoomFactor;
+      zoom *= zoomFactor;
       this.redraw();
     },
 
