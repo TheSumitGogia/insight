@@ -127,6 +127,8 @@ define([
       var drawCanvas = $("#drawCanvas")[0];
       paper.setup(drawCanvas);
 
+      Communicator.post("select", "start", {});
+
       this.addListener("load", function(image) {
         this.clear();
         this.load(image);        
@@ -213,6 +215,28 @@ define([
       this.redraw();
     },
 
+    outline: function(selection) {
+      var objects = _.map(selection.objects, function(objectID) {
+        return ObjectIndex.getObjectByID(objectID);
+      });
+      _.each(objects, function(object) {
+        var boundary = object.clone(true);
+        boundary.fillColor = null;
+        boundary.scale(object.strokeBounds.width / object.bounds.width);
+        boundary.strokeColor = selectColor;
+        boundary.strokeWidth = boundaryWidth;
+        ui["select"][object.identifier] = boundary;
+      });
+    },
+
+    clearOutline: function(selection) {
+      _.each(selection.objects, function(id) {
+        var boundary = ui["select"][id];
+        boundary.remove();
+        delete ui["select"][id];
+      });
+    },
+
     hide: function(selection) {
       var objects = _.map(selection.objects, function(objectID) {
         return ObjectIndex.getObjectByID(objectID);
@@ -242,7 +266,7 @@ define([
     },
 
     drawSelectionLt: function(selection) {
-      console.log("draw selection", selection);
+      //console.log("draw selection", selection);
       var cObjects = _.map(selection.checkpoint, function(objectID) {
         return ObjectIndex.getObjectByID(objectID);
       });

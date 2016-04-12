@@ -1,13 +1,11 @@
 define([
   "underscore",
   "backend/draw/manage/ObjectIndex",
-  "backend/generic/EventsMixin",
-  "backend/generic/Communicator"
+  "backend/generic/EventsMixin"
 ], function(
   _, 
   ObjectIndex, 
-  EventsMixin,
-  Communicator
+  EventsMixin
 ) {
 
   var states = null;

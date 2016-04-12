@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 from matplotlib.patches import Ellipse
 
 # classifier settings
-classifier = None
+classifiers = []
 positive = True 
 ctrees = True 
 clf_type = SelPClassifier
@@ -46,7 +46,7 @@ def import_trees(image):
 class SelectionHandler(BaseHTTPRequestHandler):
 
     def do_GET(self):
-        global classifier
+        global classifiers
 
         get_data = urllib.unquote(urlparse.urlparse(self.path).query)
         data = json.loads(get_data)
@@ -54,6 +54,7 @@ class SelectionHandler(BaseHTTPRequestHandler):
 
         if message == 'selection':
             print "**SELECTION REQUEST**"
+            classifier = classifiers[index]
             if classifier is not None:
                 selection = classifier.get_selection()
                 self.__send_data(selection)
@@ -90,22 +91,28 @@ class SelectionHandler(BaseHTTPRequestHandler):
             self.__send_data("success")
 
     def __test_POST(self, data, message):
-        global classifier, tester, test_type
+        global classifiers, tester, test_type
         self.__basic_POST(data, message)
-        if classifier is not None:
-            if message == 'data':
-                plt.close()
-                tester = test_type(classifier, ['fillColor_0', 'fillColor_1', 'fillColor_2'])
-            if message == 'add_example':
-                tester.update(classifier)
-            if message == 'pop_example':
-                tester.update(classifier)
-            if message == 'reset':
-                tester.update(classifier)
+        if message != 'start':
+            classifier = classifiers[data['index']]
+            if classifier is not None:
+                if message == 'data':
+                    plt.close()
+                    tester = test_type(classifier, ['fillColor_0', 'fillColor_1', 'fillColor_2'])
+                if message == 'add_example':
+                    tester.update(classifier)
+                if message == 'pop_example':
+                    tester.update(classifier)
+                if message == 'reset':
+                    tester.update(classifier)
 
     def __basic_POST(self, data, message):
-        global classifier, processor, clf_type, positive, ctrees 
-        if message == 'data':
+        global classifiers, processor, clf_type, positive, ctrees 
+        if message == 'start':
+            print "**START REQUEST**"
+            classifiers.append(None)
+            self.__send_data(len(classifiers) - 1)
+        elif message == 'data':
             print "**DATA REQUEST**"
             named_features = data['features']
             if len(named_features) != 0:
@@ -113,13 +120,14 @@ class SelectionHandler(BaseHTTPRequestHandler):
                 if ctrees:
                     image = data['image']
                     trees = import_trees(image)
-                    classifier = clf_type(None, trees=trees)
+                    classifiers[int(data['index'])] = clf_type(None, trees=trees)
                 else:
-                    classifier = clf_type(features)
+                    classifiers[int(data['index'])] = clf_type(features)
             self.__send_data("success")
         elif message == 'add_example':
             print "**ADD EXAMPLE REQUEST**"
             print "Request:", data
+            classifier = classifiers[int(data['index'])]
             if classifier is not None:
                 if positive:
                     if data['polarity'] > 0:
@@ -134,6 +142,7 @@ class SelectionHandler(BaseHTTPRequestHandler):
         elif message == 'pop_example':
             print "**POP EXAMPLE REQUEST**"
             print "Request:", data
+            classifier = classifiers[int(data['index'])]
             if classifier is not None:
                 classifier.pop_example()
                 selection = classifier.get_selection()
@@ -143,6 +152,7 @@ class SelectionHandler(BaseHTTPRequestHandler):
                 self.__send_data("success")
         elif message == 'reset':
             print "**RESET REQUEST**"
+            classifier = classifiers[int(data['index'])]
             if classifier is not None:
                 classifier.reset()
             self.__send_data("success")

@@ -20,6 +20,7 @@ define([
     zoomKey: 'e',
     toggleExKey: 't',
     toggleSelKey: 'control',
+    toggleSelKey2: 'q',
     noneFinishKey: 'o',
     removeFinishKey: 'p',
     unionFinishKey: 'u',
@@ -27,6 +28,7 @@ define([
   };
 
   var selShow = true;
+  var selShow2 = true;
   var toggledSelection = null;
   var exShow = false;
 
@@ -54,6 +56,13 @@ define([
           }
           else {
             Graphics.hide(SelectIndex.get());
+          }
+        } else if (event.key == keys.toggleSelKey2) {
+          selShow2 = !selShow2;
+          if (selShow2) {
+            Graphics.clearOutline(SelectIndex.get());
+          } else {
+            Graphics.outline(SelectIndex.get());
           }
         } else if ((event.key == 'up' || event.key == 'down' || event.key == 'right' || event.key == 'left') && event.modifiers.shift) {
           console.log("caught pan event");

@@ -228,7 +228,7 @@ class PClassifier:
         for cidx in range(len(clusters)):
             cluster = clusters[cidx]
             while (climb_condition(cluster)):
-                print 'climb', cluster.id
+                # print 'climb', cluster.id
                 score = self.__cluster_score(cluster)
                 if score >= cluster.max_score:
                     cluster.max_score = score
@@ -331,7 +331,7 @@ class SelPClassifier:
             return
         self.__selection = set(range(self.__count))
         scores = self.get_scores()
-        print 'Select Classifier scores:', scores
+        # print 'Select Classifier scores:', scores
         sorted_props = sorted(self.__prop_clfs.keys())
         score_data = np.array([[scores[sorted_props[i]]] for i in range(len(sorted_props))])
         score_data[score_data > 10] = 0
@@ -344,7 +344,7 @@ class SelPClassifier:
             if self.__prop_clfs[prop].get_constant():
                 props.append(prop)
         props = list(set(props))
-        print 'chosen select props:', props
+        # print 'chosen select props:', props
         for prop in props:
             clf = self.__prop_clfs[prop]
             self.__selection.intersection_update(set(clf.get_selection()))
@@ -503,7 +503,7 @@ class PNClassifier:
         for cidx in range(len(clusters)):
             cluster = clusters[cidx]
             while (climb_condition(cluster)):
-                print 'climb', cluster.id
+                # print 'climb', cluster.id
                 score = self.__cluster_score(cluster)
                 if score >= cluster.max_score:
                     cluster.max_score = score
